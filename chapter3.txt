@@ -4,3 +4,5 @@ Git was ready for his journey, prepared to face the trials ahead.
 Commit to be rebase 1
 Commit to be rebased 2
 Commit to be rebased 3
+The first challenge Git faced was understanding the concepts of Version Control.
+
