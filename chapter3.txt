@@ -5,4 +5,5 @@ Commit to be rebase 1
 Commit to be rebased 2
 Commit to be rebased 3
 The first challenge Git faced was understanding the concepts of Version Control.
+This commit to check if I can restore it from reflog after using git reset --hard
 
