@@ -36,6 +36,14 @@ class Inventory
             case "3":
                 EditProduct();
                 break;
+            case "4":
+                DeleteProduct();
+                break;
+            case "5":
+                SearchForProduct();
+                break;
+            case "6":
+                break;
             default:
                 Console.WriteLine("Invalid. Please try again.");
                 break;
@@ -108,7 +116,7 @@ class Inventory
             Console.Write($"{index++}: ");
             Console.WriteLine(product.Name);
         }
-        Console.Write("PLease write the product's name");
+        Console.Write("PLease write the product's name: ");
         nameIO = Console.ReadLine();
         Product? productToEdit = products.Where(p => p.Name == nameIO).FirstOrDefault();
         if (productToEdit != null)
@@ -143,9 +151,66 @@ class Inventory
         }
         else
         {
-            Console.WriteLine("The product could bot be found please check the name ant try again.");
+            Console.WriteLine("The product could bot be found please check the name and try again.");
         }
         ReturnToMainMenu();
 
+    }
+    private static void DeleteProduct()
+    {
+        initUI();
+        string? nameIO;
+        Console.WriteLine("****Delete a product****");
+        int index = 1;
+        foreach (var product in products)
+        {
+            Console.Write($"{index++}: ");
+            Console.WriteLine(product.Name);
+        }
+        Console.Write("PLease write the product's name: ");
+        nameIO = Console.ReadLine();
+        Product? productToDelete = products.Where(p => p.Name == nameIO).FirstOrDefault();
+        int indexToRemove = products.FindIndex(p => p.Name == nameIO);
+        if (productToDelete != null)
+        {
+            Console.WriteLine("Are you sure you want to delete this product. (y/n):");
+            string? optionsIO = Console.ReadLine();
+            switch (optionsIO)
+            {
+                case "n":
+                    break;
+                case "y":
+                    Console.WriteLine("The product deleted successfully.....\n");
+                    productToDelete = null;
+                    products.RemoveAt(indexToRemove);
+                    break;
+
+            }
+        }
+        else
+        {
+            Console.WriteLine("The product could bot be found please check the name and try again.");
+        }
+        ReturnToMainMenu();
+
+    }
+
+    private static void SearchForProduct()
+    {
+        initUI();
+        string? nameIO;
+        Console.WriteLine("****Search for a product****");
+        int index = 1;
+        foreach (var product in products)
+        {
+            Console.Write($"{index++}: ");
+            Console.WriteLine(product.Name);
+        }
+        Console.Write("PLease write the product's name: ");
+        nameIO = Console.ReadLine();
+        Product? productToView = products.Where(p => p.Name == nameIO).FirstOrDefault();
+        if (productToView != null) Console.WriteLine(productToView?.ViewProductDetail());
+        else Console.WriteLine("The product could bot be found please check the name and try again.");
+        ReturnToMainMenu();
     }
 }
