@@ -33,10 +33,26 @@ class Inventory
             case "2":
                 ViewAllProducts();
                 break;
+            case "3":
+                EditProduct();
+                break;
             default:
                 Console.WriteLine("Invalid. Please try again.");
                 break;
         }
+    }
+
+    private static void ReturnToMainMenu()
+    {
+        string? userInput;
+        Console.Write("Press 0 to exit to the main menu: ");
+        do
+        {
+            userInput = Console.ReadLine();
+            Console.Write("PLEASE ENTER A VAILD INPUT!!!!: ");
+        } while (userInput != "0");
+        ShowMenu();
+
     }
 
     private static void AddProduct()
@@ -69,22 +85,67 @@ class Inventory
 
     private static void ViewAllProducts()
     {
-        string? userInput;
         initUI();
+        Console.WriteLine("****View all products****");
+
         int index = 1;
         foreach (var product in products)
         {
             Console.Write($"{index++}: ");
             Console.WriteLine(product.ViewProductDetail());
         }
-        Console.Write("Press 0 to exit to the main menu: ");
-        userInput = Console.ReadLine();
-        do
+        ReturnToMainMenu();
+    }
+
+    private static void EditProduct()
+    {
+        initUI();
+        string? nameIO;
+        Console.WriteLine("****Edit a product****");
+        int index = 1;
+        foreach (var product in products)
         {
-            Console.Write("PLEASE ENTER A VAILD INPUT!!!!: ");
-            userInput = Console.ReadLine();
-        } while (userInput != "0");
-        ShowMenu();
+            Console.Write($"{index++}: ");
+            Console.WriteLine(product.Name);
+        }
+        Console.Write("PLease write the product's name");
+        nameIO = Console.ReadLine();
+        Product? productToEdit = products.Where(p => p.Name == nameIO).FirstOrDefault();
+        if (productToEdit != null)
+        {
+            Console.WriteLine("Please choose the number of what you want to change. (You can choose multiple choices, just separate them with commas.):");
+            Console.Write("1: Name\n2: Price\n3: Quantity\n: ");
+            string? optionsIO = Console.ReadLine();
+            List<string> itemsList = new List<string>(optionsIO?.Split(',') ?? Array.Empty<string>());
+            do
+            {
+                switch (itemsList[0])
+                {
+                    case "1":
+                        Console.Write("Please enter the new name: ");
+                        string? name = Console.ReadLine();
+                        productToEdit.Name = name;
+                        break;
+                    case "2":
+                        Console.Write("Please enter the new price: ");
+                        int price = int.Parse(Console.ReadLine() ?? "0");
+                        productToEdit.Price = price;
+                        break;
+                    case "3":
+                        Console.Write("Please enter the new quantity: ");
+                        int quantity = int.Parse(Console.ReadLine() ?? "0");
+                        productToEdit.Quantity = quantity;
+                        break;
+                }
+                itemsList.RemoveAt(0);
+            } while (itemsList.Count != 0);
+            Console.WriteLine("The product changed successfully.....\n");
+        }
+        else
+        {
+            Console.WriteLine("The product could bot be found please check the name ant try again.");
+        }
+        ReturnToMainMenu();
 
     }
 }
