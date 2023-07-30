@@ -2,7 +2,7 @@ namespace C__SIMS;
 
 class Inventory
 {
-    private static List<Product> inventory = new();
+    private static List<Product> products = new();
 
     private static void initUI()
     {
@@ -30,6 +30,9 @@ class Inventory
             case "1":
                 AddProduct();
                 break;
+            case "2":
+                ViewAllProducts();
+                break;
             default:
                 Console.WriteLine("Invalid. Please try again.");
                 break;
@@ -55,12 +58,33 @@ class Inventory
             Console.Write("Enter the product quantity: ");
             parseSuccess = int.TryParse(Console.ReadLine(), out int productQuantity);
             quantity = parseSuccess ? productQuantity : 0;
-            new Product(userName, price, quantity);
+            products.Add(new Product(userName, price, quantity));
             Console.Write(
                 "The product added successfully.....\nPress 1 to continue or 0 to exit to the main menu: "
             );
             userSelection = Console.ReadLine();
         } while (userSelection != "0");
         ShowMenu();
+    }
+
+    private static void ViewAllProducts()
+    {
+        string? userInput;
+        initUI();
+        int index = 1;
+        foreach (var product in products)
+        {
+            Console.Write($"{index++}: ");
+            Console.WriteLine(product.ViewProductDetail());
+        }
+        Console.Write("Press 0 to exit to the main menu: ");
+        userInput = Console.ReadLine();
+        do
+        {
+            Console.Write("PLEASE ENTER A VAILD INPUT!!!!: ");
+            userInput = Console.ReadLine();
+        } while (userInput != "0");
+        ShowMenu();
+
     }
 }
