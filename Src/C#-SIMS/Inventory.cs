@@ -43,6 +43,7 @@ class Inventory
                 SearchForProduct();
                 break;
             case "6":
+                Console.WriteLine("Exiting the Inventory Management System. Goodbye!");
                 break;
             default:
                 Console.WriteLine("Invalid. Please try again.");
