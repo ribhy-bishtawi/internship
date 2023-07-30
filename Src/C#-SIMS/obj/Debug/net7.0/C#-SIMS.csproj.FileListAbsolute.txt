@@ -1,0 +1,15 @@
+/Users/ribhibish/Desktop/Internship/Exercises/git-story/Src/C#-SIMS/bin/Debug/net7.0/C#-SIMS
+/Users/ribhibish/Desktop/Internship/Exercises/git-story/Src/C#-SIMS/bin/Debug/net7.0/C#-SIMS.deps.json
+/Users/ribhibish/Desktop/Internship/Exercises/git-story/Src/C#-SIMS/bin/Debug/net7.0/C#-SIMS.runtimeconfig.json
+/Users/ribhibish/Desktop/Internship/Exercises/git-story/Src/C#-SIMS/bin/Debug/net7.0/C#-SIMS.dll
+/Users/ribhibish/Desktop/Internship/Exercises/git-story/Src/C#-SIMS/bin/Debug/net7.0/C#-SIMS.pdb
+/Users/ribhibish/Desktop/Internship/Exercises/git-story/Src/C#-SIMS/obj/Debug/net7.0/C#-SIMS.csproj.AssemblyReference.cache
+/Users/ribhibish/Desktop/Internship/Exercises/git-story/Src/C#-SIMS/obj/Debug/net7.0/C#-SIMS.GeneratedMSBuildEditorConfig.editorconfig
+/Users/ribhibish/Desktop/Internship/Exercises/git-story/Src/C#-SIMS/obj/Debug/net7.0/C#-SIMS.AssemblyInfoInputs.cache
+/Users/ribhibish/Desktop/Internship/Exercises/git-story/Src/C#-SIMS/obj/Debug/net7.0/C#-SIMS.AssemblyInfo.cs
+/Users/ribhibish/Desktop/Internship/Exercises/git-story/Src/C#-SIMS/obj/Debug/net7.0/C#-SIMS.csproj.CoreCompileInputs.cache
+/Users/ribhibish/Desktop/Internship/Exercises/git-story/Src/C#-SIMS/obj/Debug/net7.0/C#-SIMS.dll
+/Users/ribhibish/Desktop/Internship/Exercises/git-story/Src/C#-SIMS/obj/Debug/net7.0/refint/C#-SIMS.dll
+/Users/ribhibish/Desktop/Internship/Exercises/git-story/Src/C#-SIMS/obj/Debug/net7.0/C#-SIMS.pdb
+/Users/ribhibish/Desktop/Internship/Exercises/git-story/Src/C#-SIMS/obj/Debug/net7.0/C#-SIMS.genruntimeconfig.cache
+/Users/ribhibish/Desktop/Internship/Exercises/git-story/Src/C#-SIMS/obj/Debug/net7.0/ref/C#-SIMS.dll
