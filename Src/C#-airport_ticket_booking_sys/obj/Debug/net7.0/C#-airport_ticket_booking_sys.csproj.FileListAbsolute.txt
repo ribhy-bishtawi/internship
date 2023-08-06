@@ -1,0 +1,15 @@
+/Users/ribhibish/Desktop/Internship/Exercises/git-story/Src/C#-airport_ticket_booking_sys/obj/Debug/net7.0/C#-airport_ticket_booking_sys.csproj.AssemblyReference.cache
+/Users/ribhibish/Desktop/Internship/Exercises/git-story/Src/C#-airport_ticket_booking_sys/obj/Debug/net7.0/C#-airport_ticket_booking_sys.GeneratedMSBuildEditorConfig.editorconfig
+/Users/ribhibish/Desktop/Internship/Exercises/git-story/Src/C#-airport_ticket_booking_sys/obj/Debug/net7.0/C#-airport_ticket_booking_sys.AssemblyInfoInputs.cache
+/Users/ribhibish/Desktop/Internship/Exercises/git-story/Src/C#-airport_ticket_booking_sys/obj/Debug/net7.0/C#-airport_ticket_booking_sys.AssemblyInfo.cs
+/Users/ribhibish/Desktop/Internship/Exercises/git-story/Src/C#-airport_ticket_booking_sys/obj/Debug/net7.0/C#-airport_ticket_booking_sys.csproj.CoreCompileInputs.cache
+/Users/ribhibish/Desktop/Internship/Exercises/git-story/Src/C#-airport_ticket_booking_sys/bin/Debug/net7.0/C#-airport_ticket_booking_sys
+/Users/ribhibish/Desktop/Internship/Exercises/git-story/Src/C#-airport_ticket_booking_sys/bin/Debug/net7.0/C#-airport_ticket_booking_sys.deps.json
+/Users/ribhibish/Desktop/Internship/Exercises/git-story/Src/C#-airport_ticket_booking_sys/bin/Debug/net7.0/C#-airport_ticket_booking_sys.runtimeconfig.json
+/Users/ribhibish/Desktop/Internship/Exercises/git-story/Src/C#-airport_ticket_booking_sys/bin/Debug/net7.0/C#-airport_ticket_booking_sys.dll
+/Users/ribhibish/Desktop/Internship/Exercises/git-story/Src/C#-airport_ticket_booking_sys/bin/Debug/net7.0/C#-airport_ticket_booking_sys.pdb
+/Users/ribhibish/Desktop/Internship/Exercises/git-story/Src/C#-airport_ticket_booking_sys/obj/Debug/net7.0/C#-airport_ticket_booking_sys.dll
+/Users/ribhibish/Desktop/Internship/Exercises/git-story/Src/C#-airport_ticket_booking_sys/obj/Debug/net7.0/refint/C#-airport_ticket_booking_sys.dll
+/Users/ribhibish/Desktop/Internship/Exercises/git-story/Src/C#-airport_ticket_booking_sys/obj/Debug/net7.0/C#-airport_ticket_booking_sys.pdb
+/Users/ribhibish/Desktop/Internship/Exercises/git-story/Src/C#-airport_ticket_booking_sys/obj/Debug/net7.0/C#-airport_ticket_booking_sys.genruntimeconfig.cache
+/Users/ribhibish/Desktop/Internship/Exercises/git-story/Src/C#-airport_ticket_booking_sys/obj/Debug/net7.0/ref/C#-airport_ticket_booking_sys.dll

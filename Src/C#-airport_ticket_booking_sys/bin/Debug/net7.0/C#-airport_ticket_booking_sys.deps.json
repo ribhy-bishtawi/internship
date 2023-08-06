@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v7.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v7.0": {
+      "C#-airport_ticket_booking_sys/1.0.0": {
+        "runtime": {
+          "C#-airport_ticket_booking_sys.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "C#-airport_ticket_booking_sys/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
