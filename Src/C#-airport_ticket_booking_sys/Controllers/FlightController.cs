@@ -1,0 +1,73 @@
+using AirportTrackingSystem.Models;
+using AirportTrackingSystem.Enums;
+using System;
+using System.IO;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+
+namespace AirportTrackingSystem.Controllers;
+
+public class FlightController
+{
+    private List<Flight> flights = new List<Flight>();
+
+    public void AddFlightsFromCsvFile(string filePath)
+    {
+        int tempCount = 0;
+        try
+        {
+            using (var reader = new StreamReader(filePath))
+            {
+                while (!reader.EndOfStream)
+                {
+                    tempCount++;
+                    var line = reader.ReadLine();
+                    var fields = line.Split(',');
+
+                    if (fields.Length >= 6) // Check if there are enough fields
+                    {
+                        var flight = new Flight
+                        {
+                            Price = int.Parse(fields[0]),
+                            DepartureCountry = fields[1],
+                            DepartureDate = DateTime.TryParse(fields[2], out DateTime departureDate) ? departureDate : (DateTime?)null,
+                            DepartureAirport = fields[3],
+                            ArrivalAirport = fields[4],
+                            TripClass = Enum.TryParse(fields[5], out TripClass flightClass) ? flightClass : (TripClass?)null
+                        };
+                        var validationContext = new ValidationContext(flight);
+                        var validationResults = new List<ValidationResult>();
+
+                        if (!Validator.TryValidateObject(flight, validationContext, validationResults, validateAllProperties: true))
+                        {
+                            Console.WriteLine($"The following validation errors were detected in the values entered on line {tempCount}:");
+                            foreach (var validationResult in validationResults)
+                            {
+                                Console.WriteLine($"\t{validationResult.ErrorMessage}");
+                            }
+                            continue;
+                        }
+
+                        flights.Add(flight);
+
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error reading CSV file: " + ex.Message);
+        }
+
+
+    }
+
+    public void ShowAllAvaliableFlights()
+    {
+        foreach (var item in flights)
+        {
+            Console.WriteLine($"{item.Price},{item.DepartureDate}");
+        }
+    }
+
+}

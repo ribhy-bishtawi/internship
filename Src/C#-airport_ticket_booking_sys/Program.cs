@@ -11,6 +11,8 @@ class Program
     static void Main(string[] args)
     {
         PassengerView passengerView = new PassengerView();
+        ManagerView managerView = new ManagerView();
+
         Console.WriteLine("Welcome to the Airport Ticket Booking Application");
         Console.WriteLine("===============================================");
         Console.WriteLine("Please choose the role you want to log in as:");
@@ -23,9 +25,9 @@ class Program
             case 1:
                 passengerView.ShowMainScreen();
                 break;
-            // case 2:
-            //     ManagerView();
-            //     break;
+            case 2:
+                managerView.ShowMainScreen();
+                break;
             default:
                 Console.WriteLine("Invalid choice. Please choose a valid option.");
                 break;
