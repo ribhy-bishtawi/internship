@@ -62,20 +62,11 @@ public class FlightController
         }
     }
 
-    public void ShowAllAvaliableFlights()
+    public List<Flight> ShowAllAvaliableFlights()
     {
-        Console.WriteLine("Available Flights:");
-        Console.WriteLine("{0,-10} {1,-15} {2,-20} {3,-15} {4,-15} {5,-15} {6,-10}", "Flight #", "Price", "Departure Date", "Dep. Country", "Dep. Airport", "Arr. Airport", "Flight Class");
-        Console.WriteLine(new string('-', 85));
-        int tempIndex = 1;
-
-        foreach (var flight in flights)
-        {
-
-            Console.WriteLine("{0,-10} {1,-8:C} {2,-15} {3,-20} {4,-15} {5,-15} {6,-10} ", tempIndex++, flight.Price, flight.DepartureDate, flight.DepartureCountry, flight.DepartureAirport, flight.ArrivalAirport, flight.TripClass);
-        }
+        return flights;
     }
-    public void FiltterFlightsByParameters(int? price, DateTime? depDate, string? depCountry, string? depAirport, string? arrAirport, TripClass? flightClass)
+    public bool FiltterFlightsByParameters(int? price, DateTime? depDate, string? depCountry, string? depAirport, string? arrAirport, TripClass? flightClass)
     {
 
         var filteredFlights = flights
@@ -88,12 +79,13 @@ public class FlightController
         (flightClass == null || flight.TripClass == flightClass)
     )
     .ToList();
-
+        // TODO ToString()
         foreach (var flight in filteredFlights)
         {
             Console.WriteLine("{0,-10:C} {1,-20} {2,-15} {3,-15} {4,-15} {5,-10}", flight.Price, flight.DepartureDate, flight.DepartureCountry, flight.DepartureAirport, flight.ArrivalAirport, flight.TripClass);
         }
 
+        return filteredFlights.Count != 0 ? true : false;
 
     }
 
@@ -102,8 +94,18 @@ public class FlightController
         return flights.ElementAt(--flightNum);
     }
 
-    public void CancelFlight(List<Flight> bookedFlights, int flightNum)
+    public bool CancelFlight(List<Flight> bookedFlights, int flightNum)
     {
-        bookedFlights.RemoveAt(--flightNum);
+        try
+        {
+            bookedFlights.RemoveAt(--flightNum);
+            return true;
+        }
+        catch (ArgumentOutOfRangeException ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+            return false;
+
+        }
     }
 }

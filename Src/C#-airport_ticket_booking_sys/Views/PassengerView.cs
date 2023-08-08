@@ -18,65 +18,54 @@ public class PassengerView
     private bool IsLoggedIn { set; get; } = false;
     private string Username { set; get; } = string.Empty;
 
-    public void ShowMainScreen()
+    public bool ShowMainScreen()
     {
-        InitUI();
-        if (IsLoggedIn)
+        int choice;
+        do
         {
-            Console.WriteLine($"Welcome {Username}");
-            Console.WriteLine("Please select an option:");
-            Console.WriteLine("1. Show all avaliable flights");
-            Console.WriteLine("2. Show all my bookings");
-            Console.Write("Enter your choice (1 or 2): ");
-            int choice = Convert.ToInt32(Console.ReadLine());
+            InitUI();
+            Console.WriteLine(IsLoggedIn ? $"Welcome {Username}" : "Access Denied: Authentication Required");
+            Console.WriteLine("===============================================");
+            Console.WriteLine("Please choose an action from the following options:");
+            Console.WriteLine(IsLoggedIn ? "1. Show all avaliable flights." : "Press 1 to proceed with account login.");
+            Console.WriteLine(IsLoggedIn ? "2. Show all my bookings." : "Press 2 to register a new account if you do not have one.");
+            Console.WriteLine(IsLoggedIn ? "3. Logot." : "Press 3 to return to the main menu.");
+            Console.Write("Kindly enter your choice (1, 2, or 3): ");
+            choice = Convert.ToInt32(Console.ReadLine());
             switch (choice)
             {
                 case 1:
-                    ShowAllAvaliableFlights();
+                    if (IsLoggedIn) ShowAllAvaliableFlights();
+                    else Login();
                     break;
                 case 2:
-                    ShowAllBookings();
+                    if (IsLoggedIn) ShowAllBookings();
+                    else ShowAllPassengers();
                     break;
+                case 3:
+                    return false;
                 default:
-                    Console.WriteLine("Invalid choice. Please choose a valid option.");
+                    Console.Write("Invalid choice. Please choose a valid option: ");
                     break;
             }
+        } while (choice != 3);
 
-
-        }
-        else
-        {
-            Console.WriteLine("Press 1 to login to your account");
-            Console.WriteLine("Press 0 to register if you don't have one");
-            Console.Write("Enter your choice (1 or 0): ");
-            int choice = Convert.ToInt32(Console.ReadLine());
-            switch (choice)
-            {
-                case 1:
-                    Login();
-                    break;
-                case 0:
-                    ShowAllPassengers();
-                    break;
-
-                default:
-                    Console.WriteLine("Invalid choice. Please choose a valid option.");
-                    break;
-            }
-        }
+        return false;
 
     }
     public void Login()
     {
         InitUI();
-        Console.WriteLine("Please enter you username and password");
+        Console.WriteLine("Account Login");
+        Console.WriteLine("===============================================");
+        Console.WriteLine("Please provide your username and password for authentication.");
         Console.Write("Username: ");
         string username = Console.ReadLine();
         Console.Write("Password: ");
         string password = Console.ReadLine();
         IsLoggedIn = passengerController.AddPassenger(username, password) ? true : IsLoggedIn;
         Username = IsLoggedIn ? username : Username;
-        ShowMainScreen();
+        return;
     }
     public void PassengerViewRegister()
     {
@@ -96,36 +85,75 @@ public class PassengerView
 
     public void ShowAllAvaliableFlights()
     {
-        flightController.ShowAllAvaliableFlights();
-        Console.WriteLine("Please select an option:");
-        Console.WriteLine("1. Book a flight");
-        Console.WriteLine("2. Search for a flight");
-        Console.Write("Enter your choice (1 or 2): ");
-        int choice = Convert.ToInt32(Console.ReadLine());
-        switch (choice)
+        InitUI();
+        Console.WriteLine("Available flights");
+        Console.WriteLine("===============================================");
+        List<Flight> flights = flightController.ShowAllAvaliableFlights();
+        if (flights.Count == 0)
         {
-            case 1:
-                BookFlight();
-                break;
-            case 2:
-                SearchForFlight();
-                break;
-            case 0:
-                ShowAllPassengers();
-                break;
+            Console.WriteLine("No available flights found.");
+            Console.Write("Enter '0' to return: ");
+            int choice;
+            do
+            {
+                choice = Convert.ToInt32(Console.ReadLine());
+                switch (choice)
+                {
+                    case 0:
+                        return;
+                        break;
+                    default:
+                        Console.Write("Invalid choice. Please choose a valid option: ");
+                        break;
+                }
+            } while (choice != 0);
 
-            default:
-                Console.WriteLine("Invalid choice. Please choose a valid option.");
-                break;
         }
-        ShowMainScreen();
+        else
+        {
+            // TODO make ToString in the flight model
+            Console.WriteLine("{0,-10} {1,-15} {2,-20} {3,-15} {4,-15} {5,-15} {6,-10}", "Flight #", "Price", "Departure Date", "Dep. Country", "Dep. Airport", "Arr. Airport", "Flight Class");
+            Console.WriteLine(new string('-', 85));
+            int tempIndex = 1;
+
+            foreach (var flight in flights)
+            {
+
+                Console.WriteLine("{0,-10} {1,-8:C} {2,-15} {3,-20} {4,-15} {5,-15} {6,-10} ", tempIndex++, flight.Price, flight.DepartureDate, flight.DepartureCountry, flight.DepartureAirport, flight.ArrivalAirport, flight.TripClass);
+            }
+            Console.WriteLine("Please select an option:");
+            Console.WriteLine("1. Book a flight");
+            Console.WriteLine("2. Search for a flight");
+            Console.WriteLine("3. Back");
+            Console.Write("Enter your choice (1, 2, or 3): ");
+            int choice;
+            do
+            {
+                choice = Convert.ToInt32(Console.ReadLine());
+                switch (choice)
+                {
+                    case 1:
+                        BookFlight();
+                        break;
+                    case 2:
+                        SearchForFlight();
+                        break;
+                    case 3:
+                        return;
+                    default:
+                        Console.Write("Invalid choice. Please choose a valid option: ");
+                        break;
+                }
+            } while (choice != 3);
+        }
     }
     public void BookFlight()
     {
-        Console.WriteLine("Please enter the number of flight: ");
+        Console.Write("Please enter the number of flight: ");
         int flightNumberIn = Convert.ToInt32(Console.ReadLine());
         Flight flight = flightController.FindFlight(flightNumberIn);
         passengerController.BookFlight(flight);
+        Console.Write("The flight has been booked successfully. Please enter '3' to return: ");
     }
 
     public void SearchForFlight()
@@ -159,52 +187,81 @@ public class PassengerView
         string flightClassInput = Console.ReadLine();
         TripClass? flightClass = !string.IsNullOrEmpty(flightClassInput) && Enum.TryParse(flightClassInput, out TripClass parsedFlightClass) ? parsedFlightClass : (TripClass?)null;
 
-        flightController.FiltterFlightsByParameters(price, departureDate, departureCountry, departureAirport, arrivalAirport, flightClass);
+        bool flightFound = flightController.FiltterFlightsByParameters(price, departureDate, departureCountry, departureAirport, arrivalAirport, flightClass);
+        Console.Write(flightFound ? "The flight was found successfully. Please press '3' to return: " : "The flight could not be found. Please try again or press '3' to return: ");
+
     }
     public void ShowAllBookings()
     {
+        InitUI();
         List<Flight> bookedFlights = passengerController.PassengerBookings();
-        Console.WriteLine("Available Flights:");
-        Console.WriteLine("{0,-10} {1,-15} {2,-20} {3,-15} {4,-15} {5,-15} {6,-10}", "Flight #", "Price", "Departure Date", "Dep. Country", "Dep. Airport", "Arr. Airport", "Flight Class");
-        Console.WriteLine(new string('-', 85));
-        int tempIndex = 1;
-        foreach (var flight in bookedFlights)
+        Console.WriteLine("Booked flights");
+        Console.WriteLine("===============================================");
+        if (bookedFlights.Count == 0)
         {
-
-            Console.WriteLine("{0,-10} {1,-8:C} {2,-15} {3,-20} {4,-15} {5,-15} {6,-10} ", tempIndex++, flight.Price, flight.DepartureDate, flight.DepartureCountry, flight.DepartureAirport, flight.ArrivalAirport, flight.TripClass);
+            Console.WriteLine("No available flights found.");
+            Console.Write("Enter '0' to return: ");
+            int choice;
+            do
+            {
+                choice = Convert.ToInt32(Console.ReadLine());
+                switch (choice)
+                {
+                    case 0:
+                        return;
+                        break;
+                    default:
+                        Console.Write("Invalid choice. Please choose a valid option: ");
+                        break;
+                }
+            } while (choice != 0);
         }
-        Console.WriteLine("Please select an option 1 if you want to cancel a flight or 2 to modify it:");
-        Console.Write("Enter your choice (1 or 2): ");
-        int choice = Convert.ToInt32(Console.ReadLine());
-        switch (choice)
+        else
         {
-            case 1:
-                Cancel();
-                break;
-            case 2:
-                // Modify();
-                break;
-            case 0:
-                ShowAllPassengers();
-                break;
+            // TODO ToSring()
+            Console.WriteLine("{0,-10} {1,-15} {2,-20} {3,-15} {4,-15} {5,-15} {6,-10}", "Flight #", "Price", "Departure Date", "Dep. Country", "Dep. Airport", "Arr. Airport", "Flight Class");
+            Console.WriteLine(new string('-', 85));
+            int tempIndex = 1;
+            foreach (var flight in bookedFlights)
+            {
 
-            default:
-                Console.WriteLine("Invalid choice. Please choose a valid option.");
-                break;
+                Console.WriteLine("{0,-10} {1,-8:C} {2,-15} {3,-20} {4,-15} {5,-15} {6,-10} ", tempIndex++, flight.Price, flight.DepartureDate, flight.DepartureCountry, flight.DepartureAirport, flight.ArrivalAirport, flight.TripClass);
+            }
+            Console.WriteLine("1. Cancel the flight");
+            Console.WriteLine("2. Modify the flight");
+            Console.WriteLine("3. Back");
+            Console.Write("Enter your choice (1, 2, or 3): ");
+            int choice;
+            do
+            {
+                choice = Convert.ToInt32(Console.ReadLine());
+
+                switch (choice)
+                {
+                    case 1:
+                        Cancel();
+                        break;
+                    case 2:
+                        // TODO
+                        // Modify();
+                        break;
+                    case 3:
+                        return;
+                    default:
+                        Console.Write("Invalid choice. Please choose a valid option: ");
+                        break;
+                }
+            } while (choice != 3);
         }
-        ShowMainScreen();
-
-
-
     }
 
     public void Cancel()
     {
-        Console.WriteLine("Please enter the flight num: ");
+        Console.WriteLine("Please enter the flight number to cancel it: ");
         int flightNum = Convert.ToInt32(Console.ReadLine());
         List<Flight> bookedFlights = passengerController.PassengerBookings();
-        flightController.CancelFlight(bookedFlights, flightNum);
-        ShowAllBookings();
+        bool deleted = flightController.CancelFlight(bookedFlights, flightNum);
+        Console.Write(deleted ? "The flight has been successfully canceled. Please press '3' to return: " : "The flight could not be canceled. Please try again or press '3' to return: ");
     }
     public void InitUI()
     {
