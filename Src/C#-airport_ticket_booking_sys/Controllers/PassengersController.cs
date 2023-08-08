@@ -1,4 +1,6 @@
 using AirportTrackingSystem.Models;
+using System.ComponentModel.DataAnnotations;
+
 namespace AirportTrackingSystem.Controllers;
 
 public class PassengerController
@@ -11,11 +13,42 @@ public class PassengerController
     public bool AddPassenger(string name, string password)
     {
         Passenger passenger = new Passenger { Name = name, Password = password, Flights = new List<Flight>() };
+        var validationContext = new ValidationContext(passenger);
+        var validationResults = new List<ValidationResult>();
+
+        if (!Validator.TryValidateObject(passenger, validationContext, validationResults, validateAllProperties: true))
+        {
+            foreach (var validationResult in validationResults)
+            {
+                Console.WriteLine($"{validationResult.ErrorMessage}");
+            }
+            return IsLoggedIn;
+            ;
+        }
         passengers.Add(passenger);
         IsLoggedIn = true;
         CurrentPassenger = passenger;
         return IsLoggedIn;
     }
+    public bool Login(string name, string password)
+    {
+        Passenger passenger = passengers.SingleOrDefault(passenger =>
+        (passenger.Name == name) &&
+        (passenger.Password == password));
+        IsLoggedIn = passenger != null ? true : false;
+        CurrentPassenger = passenger;
+        return IsLoggedIn;
+    }
+
+
+
+    public bool Logout()
+    {
+        IsLoggedIn = false;
+        CurrentPassenger = null;
+        return IsLoggedIn;
+    }
+
     public void BookFlight(Flight flight)
     {
         CurrentPassenger.Flights.Add(flight);
@@ -25,13 +58,9 @@ public class PassengerController
     {
         return CurrentPassenger.Flights;
     }
-    public void ShowPassengers()
+    public List<Passenger> ReturnPassengers()
     {
-        foreach (var item in passengers)
-        {
-            Console.WriteLine($"Name={item.Name}");
-        }
-
+        return passengers;
     }
 
 

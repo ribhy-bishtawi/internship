@@ -27,9 +27,9 @@ public class PassengerView
             Console.WriteLine(IsLoggedIn ? $"Welcome {Username}" : "Access Denied: Authentication Required");
             Console.WriteLine("===============================================");
             Console.WriteLine("Please choose an action from the following options:");
-            Console.WriteLine(IsLoggedIn ? "1. Show all avaliable flights." : "Press 1 to proceed with account login.");
-            Console.WriteLine(IsLoggedIn ? "2. Show all my bookings." : "Press 2 to register a new account if you do not have one.");
-            Console.WriteLine(IsLoggedIn ? "3. Logot." : "Press 3 to return to the main menu.");
+            Console.WriteLine(IsLoggedIn ? "1. Show all avaliable flights." : "1. Login.");
+            Console.WriteLine(IsLoggedIn ? "2. Show all my bookings." : "2. Register a new account");
+            Console.WriteLine(IsLoggedIn ? "3. Logot." : "3. Return to the main menu.");
             Console.Write("Kindly enter your choice (1, 2, or 3): ");
             choice = Convert.ToInt32(Console.ReadLine());
             switch (choice)
@@ -40,9 +40,10 @@ public class PassengerView
                     break;
                 case 2:
                     if (IsLoggedIn) ShowAllBookings();
-                    else ShowAllPassengers();
+                    else Register();
                     break;
                 case 3:
+                    Logout();
                     return false;
                 default:
                     Console.Write("Invalid choice. Please choose a valid option: ");
@@ -52,6 +53,20 @@ public class PassengerView
 
         return false;
 
+    }
+    public void Register()
+    {
+        InitUI();
+        Console.WriteLine("Account Register");
+        Console.WriteLine("===============================================");
+        Console.WriteLine("Please provide your username and password for authentication.");
+        Console.Write("Username: ");
+        string username = Console.ReadLine();
+        Console.Write("Password: ");
+        string password = Console.ReadLine();
+        Console.WriteLine(passengerController.AddPassenger(username, password) ? "Account has been successfully created." : "Please review your username and password, and try again.");
+        Console.Write("Press any key to continue....");
+        Console.ReadLine();
     }
     public void Login()
     {
@@ -63,10 +78,21 @@ public class PassengerView
         string username = Console.ReadLine();
         Console.Write("Password: ");
         string password = Console.ReadLine();
-        IsLoggedIn = passengerController.AddPassenger(username, password) ? true : IsLoggedIn;
+        IsLoggedIn = passengerController.Login(username, password) ? true : IsLoggedIn;
         Username = IsLoggedIn ? username : Username;
+        Console.WriteLine(IsLoggedIn ? "Login successful." : "The account could not be found. Please verify your username and password and try again.");
+        Console.Write("Press any key to continue....");
+        Console.ReadLine();
+    }
+
+    public void Logout()
+    {
+        InitUI();
+        IsLoggedIn = passengerController.Logout() ? IsLoggedIn : false;
+        Username = IsLoggedIn ? string.Empty : Username;
         return;
     }
+
     public void PassengerViewRegister()
     {
         InitUI();
@@ -80,7 +106,6 @@ public class PassengerView
     public void ShowAllPassengers()
     {
         InitUI();
-        passengerController.ShowPassengers();
     }
 
     public void ShowAllAvaliableFlights()

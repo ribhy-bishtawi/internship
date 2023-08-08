@@ -79,7 +79,18 @@ public class ManagerView
     }
     public void ShowBookedFlights()
     {
-        ;
+        Console.WriteLine("Booked Flights");
+        Console.WriteLine("===================================");
+        List<Passenger> passengers = passengerController.ReturnPassengers();
+        foreach (var passenger in passengers)
+        {
+            foreach (var flight in passenger.Flights)
+            {
+                Console.WriteLine("{0,-10:C} {1,-20} {2,-15} {3,-15} {4,-15} {5,-10}", flight.Price, flight.DepartureDate, flight.DepartureCountry, flight.DepartureAirport, flight.ArrivalAirport, flight.TripClass);
+
+            }
+        }
+        Console.ReadLine();
     }
 
     public void ShowAllAvaliableFlights()
