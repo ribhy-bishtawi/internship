@@ -1,5 +1,7 @@
 using AirportTrackingSystem.Models;
 using System.ComponentModel.DataAnnotations;
+using AirportTrackingSystem.Enums;
+
 
 namespace AirportTrackingSystem.Controllers;
 
@@ -10,25 +12,27 @@ public class PassengerController
     private Passenger CurrentPassenger { set; get; } = new Passenger();
 
 
-    public bool AddPassenger(string name, string password)
+    public AccountStatus AddPassenger(string name, string password)
     {
-        Passenger passenger = new Passenger { Name = name, Password = password, Flights = new List<Flight>() };
-        var validationContext = new ValidationContext(passenger);
-        var validationResults = new List<ValidationResult>();
-
-        if (!Validator.TryValidateObject(passenger, validationContext, validationResults, validateAllProperties: true))
+        bool alreadyRegistered = passengers.SingleOrDefault(passenger => passenger.Name == name) != null ? true : false;
+        if (!alreadyRegistered)
         {
-            foreach (var validationResult in validationResults)
+            Passenger passenger = new Passenger { Name = name, Password = password, Flights = new List<Flight>() };
+            var validationContext = new ValidationContext(passenger);
+            var validationResults = new List<ValidationResult>();
+            if (!Validator.TryValidateObject(passenger, validationContext, validationResults, validateAllProperties: true))
             {
-                Console.WriteLine($"{validationResult.ErrorMessage}");
+                foreach (var validationResult in validationResults)
+                {
+                    Console.WriteLine($"{validationResult.ErrorMessage}");
+                }
+                return AccountStatus.ValidationError;
+                ;
             }
-            return IsLoggedIn;
-            ;
+            passengers.Add(passenger);
+            return AccountStatus.Success;
         }
-        passengers.Add(passenger);
-        IsLoggedIn = true;
-        CurrentPassenger = passenger;
-        return IsLoggedIn;
+        return AccountStatus.AlreadyRegistered;
     }
     public bool Login(string name, string password)
     {

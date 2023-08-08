@@ -64,7 +64,8 @@ public class PassengerView
         string username = Console.ReadLine();
         Console.Write("Password: ");
         string password = Console.ReadLine();
-        Console.WriteLine(passengerController.AddPassenger(username, password) ? "Account has been successfully created." : "Please review your username and password, and try again.");
+        AccountStatus accountStatus = passengerController.AddPassenger(username, password);
+        Console.WriteLine(accountStatus == AccountStatus.Success ? "Account has been successfully created." : accountStatus == AccountStatus.ValidationError ? "Please review your username and password, and try again." : "Username already in used please try another one.");
         Console.Write("Press any key to continue....");
         Console.ReadLine();
     }

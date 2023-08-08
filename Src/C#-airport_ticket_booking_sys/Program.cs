@@ -49,3 +49,6 @@ class Program
     }
 }
 
+// TODO
+// FlightClass
+// ToString method for the flight class 
