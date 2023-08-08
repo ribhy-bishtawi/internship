@@ -6,7 +6,18 @@ namespace AirportTrackingSystem.Views;
 
 public class ManagerView
 {
-    private FlightController flightController = new FlightController();
+    private FlightController flightController;
+    private PassengerController passengerController;
+    private PassengerView passengerView;
+
+    public ManagerView(PassengerController passengerController, FlightController flightController)
+    {
+        this.passengerController = passengerController;
+        this.flightController = flightController;
+        this.passengerView = new PassengerView(passengerController, flightController);
+
+    }
+
 
     public void ShowMainScreen()
     {
@@ -24,6 +35,9 @@ public class ManagerView
             case 2:
                 AddFlights();
                 break;
+            case 0:
+                passengerView.ShowMainScreen();
+                break;
 
             default:
                 Console.WriteLine("Invalid choice. Please choose a valid option.");
@@ -38,7 +52,7 @@ public class ManagerView
         Console.WriteLine("Please enter you file's path");
         string filePath = Console.ReadLine();
         flightController.AddFlightsFromCsvFile(filePath);
-        ShowAllAvaliableFlights();
+        ShowMainScreen();
 
 
     }

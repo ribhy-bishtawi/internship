@@ -64,10 +64,43 @@ public class FlightController
 
     public void ShowAllAvaliableFlights()
     {
-        foreach (var item in flights)
+        Console.WriteLine("Available Flights:");
+        Console.WriteLine("{0,-10} {1,-20} {2,-15} {3,-15} {4,-15} {5,-10}", "Price", "Departure Date", "Dep. Country", "Dep. Airport", "Arr. Airport", "Flight Class");
+        Console.WriteLine(new string('-', 85));
+
+        foreach (var flight in flights)
         {
-            Console.WriteLine($"{item.Price},{item.DepartureDate}");
+            Console.WriteLine("{0,-10:C} {1,-20} {2,-15} {3,-15} {4,-15} {5,-10}", flight.Price, flight.DepartureDate, flight.DepartureCountry, flight.DepartureAirport, flight.ArrivalAirport, flight.TripClass);
         }
+    }
+    public void FiltterFlightsByParameters(int? price, DateTime? depDate, string? depCountry, string? depAirport, string? arrAirport, TripClass? flightClass)
+    {
+
+        // var filteredFlights = flights
+        // .Where(flight => price == null || flight.Price == price)
+        // .Where(flight => depDate == null || flight.DepartureDate == depDate)
+        // .Where(flight => depCountry == null || flight.DepartureCountry == depCountry)
+        // .Where(flight => depAirport == null || flight.DepartureAirport == depAirport)
+        // .Where(flight => arrAirport == null || flight.ArrivalAirport == arrAirport)
+        // .Where(flight => flightClass == null || flight.TripClass == flightClass)
+        //  .ToList();
+        var filteredFlights = flights
+    .Where(flight =>
+        (price == null || flight.Price == price) &&
+        (depDate == null || flight.DepartureDate == depDate) &&
+        (depCountry == null || flight.DepartureCountry == depCountry) &&
+        (depAirport == null || flight.DepartureAirport == depAirport) &&
+        (arrAirport == null || flight.ArrivalAirport == arrAirport) &&
+        (flightClass == null || flight.TripClass == flightClass)
+    )
+    .ToList();
+
+        foreach (var flight in filteredFlights)
+        {
+            Console.WriteLine("{0,-10:C} {1,-20} {2,-15} {3,-15} {4,-15} {5,-10}", flight.Price, flight.DepartureDate, flight.DepartureCountry, flight.DepartureAirport, flight.ArrivalAirport, flight.TripClass);
+        }
+
+
     }
 
 }

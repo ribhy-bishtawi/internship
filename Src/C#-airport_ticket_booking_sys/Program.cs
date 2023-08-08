@@ -10,8 +10,11 @@ class Program
 {
     static void Main(string[] args)
     {
-        PassengerView passengerView = new PassengerView();
-        ManagerView managerView = new ManagerView();
+        PassengerController passengerController = new PassengerController();
+        FlightController flightController = new FlightController();
+
+        PassengerView passengerView = new PassengerView(passengerController, flightController);
+        ManagerView managerView = new ManagerView(passengerController, flightController);
 
         Console.WriteLine("Welcome to the Airport Ticket Booking Application");
         Console.WriteLine("===============================================");
@@ -32,9 +35,6 @@ class Program
                 Console.WriteLine("Invalid choice. Please choose a valid option.");
                 break;
         }
-
-
-
     }
 }
 
