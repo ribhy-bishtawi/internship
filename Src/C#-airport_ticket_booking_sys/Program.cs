@@ -32,7 +32,7 @@ class Program
             switch (choice)
             {
                 case 1:
-                    passengerView.ShowMainScreen();
+                    exitApplication = passengerView.ShowMainScreen();
                     break;
                 case 2:
                     exitApplication = managerView.ShowMainScreen();

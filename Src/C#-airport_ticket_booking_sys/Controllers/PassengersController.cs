@@ -63,6 +63,9 @@ public class PassengerController
         return passengers;
     }
 
-
+    public Passenger ReturnPassengerByName(string? name)
+    {
+        return passengers.SingleOrDefault(passenger => passenger.Name == name);
+    }
 
 }

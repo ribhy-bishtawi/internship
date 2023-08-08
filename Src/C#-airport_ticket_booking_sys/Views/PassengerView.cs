@@ -93,20 +93,6 @@ public class PassengerView
         return;
     }
 
-    public void PassengerViewRegister()
-    {
-        InitUI();
-        Console.WriteLine("Please enter you username and password");
-        Console.Write("Username: ");
-        string userName = Console.ReadLine();
-        Console.Write("Password: ");
-        string password = Console.ReadLine();
-
-    }
-    public void ShowAllPassengers()
-    {
-        InitUI();
-    }
 
     public void ShowAllAvaliableFlights()
     {
@@ -282,7 +268,7 @@ public class PassengerView
 
     public void Cancel()
     {
-        Console.WriteLine("Please enter the flight number to cancel it: ");
+        Console.Write("Please enter the flight number to cancel it: ");
         int flightNum = Convert.ToInt32(Console.ReadLine());
         List<Flight> bookedFlights = passengerController.PassengerBookings();
         bool deleted = flightController.CancelFlight(bookedFlights, flightNum);

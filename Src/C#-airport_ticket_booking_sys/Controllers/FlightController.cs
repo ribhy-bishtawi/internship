@@ -66,10 +66,11 @@ public class FlightController
     {
         return flights;
     }
-    public bool FiltterFlightsByParameters(int? price, DateTime? depDate, string? depCountry, string? depAirport, string? arrAirport, TripClass? flightClass)
+    public bool FiltterFlightsByParameters(int? price, DateTime? depDate, string? depCountry, string? depAirport, string? arrAirport, TripClass? flightClass, Passenger passenger = null)
     {
+        List<Flight> tempFlights = passenger != null ? passenger.Flights : flights;
 
-        var filteredFlights = flights
+        var filteredFlights = tempFlights
     .Where(flight =>
         (price == null || flight.Price == price) &&
         (depDate == null || flight.DepartureDate == depDate) &&
@@ -84,9 +85,7 @@ public class FlightController
         {
             Console.WriteLine("{0,-10:C} {1,-20} {2,-15} {3,-15} {4,-15} {5,-10}", flight.Price, flight.DepartureDate, flight.DepartureCountry, flight.DepartureAirport, flight.ArrivalAirport, flight.TripClass);
         }
-
         return filteredFlights.Count != 0 ? true : false;
-
     }
 
     public Flight FindFlight(int flightNum)

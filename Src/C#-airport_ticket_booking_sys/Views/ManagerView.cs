@@ -96,6 +96,30 @@ public class ManagerView
         }
         if (!printed)
             Console.WriteLine("No booked flights yet.");
+        else
+        {
+            Console.WriteLine("Please select an option:");
+            Console.WriteLine("1. Search for a flight");
+            Console.WriteLine("2. Back");
+            Console.Write("Enter your choice (1, or 2): ");
+            int choice;
+            do
+            {
+                choice = Convert.ToInt32(Console.ReadLine());
+                switch (choice)
+                {
+                    case 1:
+                        SearchForFlight();
+                        break;
+                    case 2:
+                        return;
+                    default:
+                        Console.Write("Invalid choice. Please choose a valid option: ");
+                        break;
+                }
+            } while (choice != 2);
+
+        }
         Console.Write("Press any key to continue.....");
         Console.ReadLine();
     }
@@ -103,6 +127,47 @@ public class ManagerView
     public void ShowAllAvaliableFlights()
     {
         flightController.ShowAllAvaliableFlights();
+    }
+
+    public void SearchForFlight()
+    {
+        Console.WriteLine("You can search using any of the following parameters (leave it blank if you don't wish to use it):");
+
+        Console.Write("Enter the passenger name: ");
+        string? passengerName = Console.ReadLine();
+        passengerName = !string.IsNullOrEmpty(passengerName) ? passengerName : null;
+        Passenger passenger = passengerController.ReturnPassengerByName(passengerName);
+
+
+        Console.Write("Enter the desired price: ");
+        string priceInput = Console.ReadLine();
+        int? price = !string.IsNullOrEmpty(priceInput) && int.TryParse(priceInput, out int parsedPrice) ? parsedPrice : (int?)null;
+
+        Console.Write("Enter the preferred departure date: ");
+        string departureDateInput = Console.ReadLine();
+        DateTime? departureDate = !string.IsNullOrEmpty(departureDateInput) && DateTime.TryParse(departureDateInput, out DateTime parsedDepartureDate) ? parsedDepartureDate : (DateTime?)null;
+
+        Console.Write("Enter the departure country: ");
+        string? departureCountry = Console.ReadLine();
+        departureCountry = !string.IsNullOrEmpty(departureCountry) ? departureCountry : null;
+
+        Console.Write("Enter the departure airport: ");
+        string? departureAirport = Console.ReadLine();
+        departureAirport = !string.IsNullOrEmpty(departureAirport) ? departureAirport : null;
+
+
+        Console.Write("Enter the arrival airport: ");
+        string? arrivalAirport = Console.ReadLine();
+        arrivalAirport = !string.IsNullOrEmpty(arrivalAirport) ? arrivalAirport : null;
+
+
+        Console.Write("Enter the preferred flight class: ");
+        string flightClassInput = Console.ReadLine();
+        TripClass? flightClass = !string.IsNullOrEmpty(flightClassInput) && Enum.TryParse(flightClassInput, out TripClass parsedFlightClass) ? parsedFlightClass : (TripClass?)null;
+
+        bool flightFound = flightController.FiltterFlightsByParameters(price, departureDate, departureCountry, departureAirport, arrivalAirport, flightClass, passenger);
+        Console.Write(flightFound ? "The flight was found successfully. Please enter '2' to return: " : "The flight could not be found. Please try again or enter '3' to return: ");
+
     }
     public void InitUI()
     {
