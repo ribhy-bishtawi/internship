@@ -15,26 +15,37 @@ class Program
 
         PassengerView passengerView = new PassengerView(passengerController, flightController);
         ManagerView managerView = new ManagerView(passengerController, flightController);
-
-        Console.WriteLine("Welcome to the Airport Ticket Booking Application");
-        Console.WriteLine("===============================================");
-        Console.WriteLine("Please choose the role you want to log in as:");
-        Console.WriteLine("1. Passenger");
-        Console.WriteLine("2. Manager");
-        Console.Write("Enter your choice (1 or 2): ");
-        int choice = Convert.ToInt32(Console.ReadLine());
-        switch (choice)
+        bool exitApplication = false;
+        do
         {
-            case 1:
-                passengerView.ShowMainScreen();
-                break;
-            case 2:
-                managerView.ShowMainScreen();
-                break;
-            default:
-                Console.WriteLine("Invalid choice. Please choose a valid option.");
-                break;
-        }
+            Console.ResetColor();
+            Console.Clear();
+            Console.WriteLine("Welcome to the Airport Ticket Booking Application");
+            Console.WriteLine("===============================================");
+            Console.WriteLine("Please choose the role you want to log in as:");
+            Console.WriteLine("1. Passenger");
+            Console.WriteLine("2. Manager");
+            Console.WriteLine("3. Exit");
+            Console.Write("Enter your choice (1, 2, or 3): ");
+            int choice = Convert.ToInt32(Console.ReadLine());
+
+            switch (choice)
+            {
+                case 1:
+                    passengerView.ShowMainScreen();
+                    break;
+                case 2:
+                    exitApplication = managerView.ShowMainScreen();
+                    break;
+                case 3:
+                    exitApplication = true;
+                    break;
+                default:
+                    Console.WriteLine("Invalid choice. Please choose a valid option.");
+                    break;
+            }
+
+        } while (!exitApplication);
     }
 }
 

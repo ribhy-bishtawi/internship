@@ -11,7 +11,7 @@ public class FlightController
 {
     private List<Flight> flights = new List<Flight>();
 
-    public void AddFlightsFromCsvFile(string filePath)
+    public bool AddFlightsFromCsvFile(string filePath)
     {
         int tempCount = 0;
         try
@@ -53,10 +53,12 @@ public class FlightController
                     }
                 }
             }
+            return true;
         }
         catch (Exception ex)
         {
             Console.WriteLine("Error reading CSV file: " + ex.Message);
+            return false;
         }
     }
 
