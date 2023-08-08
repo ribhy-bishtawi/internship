@@ -168,13 +168,43 @@ public class PassengerView
         Console.WriteLine("{0,-10} {1,-15} {2,-20} {3,-15} {4,-15} {5,-15} {6,-10}", "Flight #", "Price", "Departure Date", "Dep. Country", "Dep. Airport", "Arr. Airport", "Flight Class");
         Console.WriteLine(new string('-', 85));
         int tempIndex = 1;
-
         foreach (var flight in bookedFlights)
         {
 
             Console.WriteLine("{0,-10} {1,-8:C} {2,-15} {3,-20} {4,-15} {5,-15} {6,-10} ", tempIndex++, flight.Price, flight.DepartureDate, flight.DepartureCountry, flight.DepartureAirport, flight.ArrivalAirport, flight.TripClass);
         }
+        Console.WriteLine("Please select an option 1 if you want to cancel a flight or 2 to modify it:");
+        Console.Write("Enter your choice (1 or 2): ");
+        int choice = Convert.ToInt32(Console.ReadLine());
+        switch (choice)
+        {
+            case 1:
+                Cancel();
+                break;
+            case 2:
+                // Modify();
+                break;
+            case 0:
+                ShowAllPassengers();
+                break;
 
+            default:
+                Console.WriteLine("Invalid choice. Please choose a valid option.");
+                break;
+        }
+        ShowMainScreen();
+
+
+
+    }
+
+    public void Cancel()
+    {
+        Console.WriteLine("Please enter the flight num: ");
+        int flightNum = Convert.ToInt32(Console.ReadLine());
+        List<Flight> bookedFlights = passengerController.PassengerBookings();
+        flightController.CancelFlight(bookedFlights, flightNum);
+        ShowAllBookings();
     }
     public void InitUI()
     {

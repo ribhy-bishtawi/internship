@@ -99,4 +99,9 @@ public class FlightController
     {
         return flights.ElementAt(--flightNum);
     }
+
+    public void CancelFlight(List<Flight> bookedFlights, int flightNum)
+    {
+        bookedFlights.RemoveAt(--flightNum);
+    }
 }
