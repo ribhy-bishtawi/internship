@@ -1,7 +1,7 @@
 using AirportTrackingSystem.Enums;
 using System;
-namespace AirportTrackingSystem.Models;
 using System.ComponentModel.DataAnnotations;
+namespace AirportTrackingSystem.Models;
 
 public class Flight
 {
