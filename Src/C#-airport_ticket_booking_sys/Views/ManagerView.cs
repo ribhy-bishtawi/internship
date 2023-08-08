@@ -79,17 +79,24 @@ public class ManagerView
     }
     public void ShowBookedFlights()
     {
+        InitUI();
         Console.WriteLine("Booked Flights");
         Console.WriteLine("===================================");
         List<Passenger> passengers = passengerController.ReturnPassengers();
+        bool printed = false;
         foreach (var passenger in passengers)
         {
+            if (passenger.Flights.Count > 0)
+                Console.WriteLine($"{passenger.Name}:");
             foreach (var flight in passenger.Flights)
             {
-                Console.WriteLine("{0,-10:C} {1,-20} {2,-15} {3,-15} {4,-15} {5,-10}", flight.Price, flight.DepartureDate, flight.DepartureCountry, flight.DepartureAirport, flight.ArrivalAirport, flight.TripClass);
-
+                printed = true;
+                Console.WriteLine("\t{0,-10:C} {1,-20} {2,-15} {3,-15} {4,-15} {5,-10}", flight.Price, flight.DepartureDate, flight.DepartureCountry, flight.DepartureAirport, flight.ArrivalAirport, flight.TripClass);
             }
         }
+        if (!printed)
+            Console.WriteLine("No booked flights yet.");
+        Console.Write("Press any key to continue.....");
         Console.ReadLine();
     }
 
