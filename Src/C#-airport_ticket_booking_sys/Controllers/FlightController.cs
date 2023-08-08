@@ -58,32 +58,24 @@ public class FlightController
         {
             Console.WriteLine("Error reading CSV file: " + ex.Message);
         }
-
-
     }
 
     public void ShowAllAvaliableFlights()
     {
         Console.WriteLine("Available Flights:");
-        Console.WriteLine("{0,-10} {1,-20} {2,-15} {3,-15} {4,-15} {5,-10}", "Price", "Departure Date", "Dep. Country", "Dep. Airport", "Arr. Airport", "Flight Class");
+        Console.WriteLine("{0,-10} {1,-15} {2,-20} {3,-15} {4,-15} {5,-15} {6,-10}", "Flight #", "Price", "Departure Date", "Dep. Country", "Dep. Airport", "Arr. Airport", "Flight Class");
         Console.WriteLine(new string('-', 85));
+        int tempIndex = 1;
 
         foreach (var flight in flights)
         {
-            Console.WriteLine("{0,-10:C} {1,-20} {2,-15} {3,-15} {4,-15} {5,-10}", flight.Price, flight.DepartureDate, flight.DepartureCountry, flight.DepartureAirport, flight.ArrivalAirport, flight.TripClass);
+
+            Console.WriteLine("{0,-10} {1,-8:C} {2,-15} {3,-20} {4,-15} {5,-15} {6,-10} ", tempIndex++, flight.Price, flight.DepartureDate, flight.DepartureCountry, flight.DepartureAirport, flight.ArrivalAirport, flight.TripClass);
         }
     }
     public void FiltterFlightsByParameters(int? price, DateTime? depDate, string? depCountry, string? depAirport, string? arrAirport, TripClass? flightClass)
     {
 
-        // var filteredFlights = flights
-        // .Where(flight => price == null || flight.Price == price)
-        // .Where(flight => depDate == null || flight.DepartureDate == depDate)
-        // .Where(flight => depCountry == null || flight.DepartureCountry == depCountry)
-        // .Where(flight => depAirport == null || flight.DepartureAirport == depAirport)
-        // .Where(flight => arrAirport == null || flight.ArrivalAirport == arrAirport)
-        // .Where(flight => flightClass == null || flight.TripClass == flightClass)
-        //  .ToList();
         var filteredFlights = flights
     .Where(flight =>
         (price == null || flight.Price == price) &&
@@ -103,4 +95,8 @@ public class FlightController
 
     }
 
+    public Flight FindFlight(int flightNum)
+    {
+        return flights.ElementAt(--flightNum);
+    }
 }
