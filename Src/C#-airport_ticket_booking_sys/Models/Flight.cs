@@ -32,6 +32,17 @@ public class Flight
         return string.Format("{0,-10:C} {1,-20} {2,-15} {3,-15} {4,-15} {5,-10}",
             Price, DepartureDate, DepartureCountry, DepartureAirport, ArrivalAirport, TripClass);
     }
+    public Flight DeepCopy()
+    {
+        Flight copy = new Flight();
+        copy.Price = Price;
+        copy.DepartureDate = DepartureDate;
+        copy.DepartureCountry = DepartureCountry;
+        copy.DepartureAirport = DepartureAirport;
+        copy.ArrivalAirport = ArrivalAirport;
+        copy.TripClass = TripClass;
+        return copy;
+    }
 
 
 }

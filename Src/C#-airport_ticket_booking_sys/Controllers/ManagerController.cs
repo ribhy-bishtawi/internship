@@ -17,14 +17,6 @@ public class ManagerController
         passenger.Flights.Add(flight);
 
     }
-    public void ShowPassengers()
-    {
-        foreach (var item in passengers)
-        {
-            Console.WriteLine($"Name={item.Name}");
-        }
-
-    }
 
 
 
