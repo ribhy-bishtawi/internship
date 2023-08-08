@@ -27,5 +27,11 @@ public class Flight
 
     [Required(ErrorMessage = "Flight class is required. Valid options are Economy, Business, or FirstClass.")]
     public TripClass? TripClass { get; set; }
+    public override string ToString()
+    {
+        return string.Format("{0,-10:C} {1,-20} {2,-15} {3,-15} {4,-15} {5,-10}",
+            Price, DepartureDate, DepartureCountry, DepartureAirport, ArrivalAirport, TripClass);
+    }
+
 
 }

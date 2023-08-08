@@ -91,7 +91,7 @@ public class ManagerView
             foreach (var flight in passenger.Flights)
             {
                 printed = true;
-                Console.WriteLine("\t{0,-10:C} {1,-20} {2,-15} {3,-15} {4,-15} {5,-10}", flight.Price, flight.DepartureDate, flight.DepartureCountry, flight.DepartureAirport, flight.ArrivalAirport, flight.TripClass);
+                Console.WriteLine(flight);
             }
         }
         if (!printed)
@@ -165,8 +165,12 @@ public class ManagerView
         string flightClassInput = Console.ReadLine();
         TripClass? flightClass = !string.IsNullOrEmpty(flightClassInput) && Enum.TryParse(flightClassInput, out TripClass parsedFlightClass) ? parsedFlightClass : (TripClass?)null;
 
-        bool flightFound = flightController.FiltterFlightsByParameters(price, departureDate, departureCountry, departureAirport, arrivalAirport, flightClass, passenger);
-        Console.Write(flightFound ? "The flight was found successfully. Please enter '2' to return: " : "The flight could not be found. Please try again or enter '3' to return: ");
+        List<Flight> filteredFlights = flightController.FiltterFlightsByParameters(price, departureDate, departureCountry, departureAirport, arrivalAirport, flightClass, passenger);
+        foreach (var flight in filteredFlights)
+        {
+            Console.WriteLine(flight);
+        }
+        Console.Write(filteredFlights.Count != 0 ? "The flights were found successfully. Please enter '2' to return: " : "The flights could not be found. Please try again or enter '2' to return: ");
 
     }
     public void InitUI()

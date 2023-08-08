@@ -66,7 +66,7 @@ public class FlightController
     {
         return flights;
     }
-    public bool FiltterFlightsByParameters(int? price, DateTime? depDate, string? depCountry, string? depAirport, string? arrAirport, TripClass? flightClass, Passenger passenger = null)
+    public List<Flight> FiltterFlightsByParameters(int? price, DateTime? depDate, string? depCountry, string? depAirport, string? arrAirport, TripClass? flightClass, Passenger passenger = null)
     {
         List<Flight> tempFlights = passenger != null ? passenger.Flights : flights;
 
@@ -80,12 +80,7 @@ public class FlightController
         (flightClass == null || flight.TripClass == flightClass)
     )
     .ToList();
-        // TODO ToString()
-        foreach (var flight in filteredFlights)
-        {
-            Console.WriteLine("{0,-10:C} {1,-20} {2,-15} {3,-15} {4,-15} {5,-10}", flight.Price, flight.DepartureDate, flight.DepartureCountry, flight.DepartureAirport, flight.ArrivalAirport, flight.TripClass);
-        }
-        return filteredFlights.Count != 0 ? true : false;
+        return filteredFlights;
     }
 
     public Flight FindFlight(int flightNum)

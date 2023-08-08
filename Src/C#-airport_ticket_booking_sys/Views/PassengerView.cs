@@ -123,15 +123,13 @@ public class PassengerView
         }
         else
         {
-            // TODO make ToString in the flight model
             Console.WriteLine("{0,-10} {1,-15} {2,-20} {3,-15} {4,-15} {5,-15} {6,-10}", "Flight #", "Price", "Departure Date", "Dep. Country", "Dep. Airport", "Arr. Airport", "Flight Class");
             Console.WriteLine(new string('-', 85));
             int tempIndex = 1;
 
             foreach (var flight in flights)
             {
-
-                Console.WriteLine("{0,-10} {1,-8:C} {2,-15} {3,-20} {4,-15} {5,-15} {6,-10} ", tempIndex++, flight.Price, flight.DepartureDate, flight.DepartureCountry, flight.DepartureAirport, flight.ArrivalAirport, flight.TripClass);
+                Console.WriteLine(flight);
             }
             Console.WriteLine("Please select an option:");
             Console.WriteLine("1. Book a flight");
@@ -199,8 +197,12 @@ public class PassengerView
         string flightClassInput = Console.ReadLine();
         TripClass? flightClass = !string.IsNullOrEmpty(flightClassInput) && Enum.TryParse(flightClassInput, out TripClass parsedFlightClass) ? parsedFlightClass : (TripClass?)null;
 
-        bool flightFound = flightController.FiltterFlightsByParameters(price, departureDate, departureCountry, departureAirport, arrivalAirport, flightClass);
-        Console.Write(flightFound ? "The flight was found successfully. Please press '3' to return: " : "The flight could not be found. Please try again or press '3' to return: ");
+        List<Flight> filteredFlights = flightController.FiltterFlightsByParameters(price, departureDate, departureCountry, departureAirport, arrivalAirport, flightClass);
+        foreach (var flight in filteredFlights)
+        {
+            Console.WriteLine(flight);
+        }
+        Console.Write(filteredFlights.Count != 0 ? "The flights were found successfully. Please press '3' to return: " : "The flights could not be found. Please try again or press '3' to return: ");
 
     }
     public void ShowAllBookings()
@@ -230,14 +232,12 @@ public class PassengerView
         }
         else
         {
-            // TODO ToSring()
             Console.WriteLine("{0,-10} {1,-15} {2,-20} {3,-15} {4,-15} {5,-15} {6,-10}", "Flight #", "Price", "Departure Date", "Dep. Country", "Dep. Airport", "Arr. Airport", "Flight Class");
             Console.WriteLine(new string('-', 85));
             int tempIndex = 1;
             foreach (var flight in bookedFlights)
             {
-
-                Console.WriteLine("{0,-10} {1,-8:C} {2,-15} {3,-20} {4,-15} {5,-15} {6,-10} ", tempIndex++, flight.Price, flight.DepartureDate, flight.DepartureCountry, flight.DepartureAirport, flight.ArrivalAirport, flight.TripClass);
+                Console.WriteLine(flight);
             }
             Console.WriteLine("1. Cancel the flight");
             Console.WriteLine("2. Modify the flight");
