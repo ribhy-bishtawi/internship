@@ -50,4 +50,4 @@ class Program
 }
 
 // TODO
-// FlightClass
+// Returning only the booked flights if the manager enters empty filters

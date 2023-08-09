@@ -91,7 +91,7 @@ public class ManagerView
             foreach (var flight in passenger.Flights)
             {
                 printed = true;
-                Console.WriteLine(flight);
+                Console.WriteLine("\t" + flight);
             }
         }
         if (!printed)
@@ -122,11 +122,6 @@ public class ManagerView
         }
         Console.Write("Press any key to continue.....");
         Console.ReadLine();
-    }
-
-    public void ShowAllAvaliableFlights()
-    {
-        flightController.ShowAllAvaliableFlights();
     }
 
     public void SearchForFlight()

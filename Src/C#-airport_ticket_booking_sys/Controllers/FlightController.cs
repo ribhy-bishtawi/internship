@@ -102,4 +102,14 @@ public class FlightController
 
         }
     }
+
+    public void ChangeClass(Flight bookedFlight, TripClass newTripClass)
+    {
+        int? multiplier = newTripClass - bookedFlight.TripClass;
+        bookedFlight.TripClass = newTripClass;
+        bookedFlight.Price += multiplier * 50;
+
+    }
+
 }
+

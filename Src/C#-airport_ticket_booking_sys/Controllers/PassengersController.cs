@@ -53,9 +53,16 @@ public class PassengerController
         return IsLoggedIn;
     }
 
-    public void BookFlight(Flight flight)
+    public FlightState BookFlight(Flight flightToBook)
     {
-        CurrentPassenger.Flights.Add(flight);
+        Flight alreadyBooked = CurrentPassenger.Flights.SingleOrDefault(flight =>
+        (flight.DepartureDate == flightToBook.DepartureDate) &&
+        (flight.DepartureCountry == flightToBook.DepartureCountry) &&
+        (flight.DepartureAirport == flightToBook.DepartureAirport) &&
+        (flight.ArrivalAirport == flightToBook.ArrivalAirport));
+        if (alreadyBooked == null)
+            CurrentPassenger.Flights.Add(flightToBook);
+        return alreadyBooked == null ? FlightState.Success : FlightState.AlreadyBooked;
 
     }
     public List<Flight> PassengerBookings()
