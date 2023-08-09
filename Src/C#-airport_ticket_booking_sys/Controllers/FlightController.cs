@@ -69,7 +69,6 @@ public class FlightController
     public List<Flight> FiltterFlightsByParameters(int? price, DateTime? depDate, string? depCountry, string? depAirport, string? arrAirport, TripClass? flightClass, Passenger passenger = null)
     {
         List<Flight> tempFlights = passenger != null ? passenger.Flights : flights;
-
         var filteredFlights = tempFlights
     .Where(flight =>
         (price == null || flight.Price == price) &&

@@ -131,7 +131,7 @@ public class ManagerView
         Console.Write("Enter the passenger name: ");
         string? passengerName = Console.ReadLine();
         passengerName = !string.IsNullOrEmpty(passengerName) ? passengerName : null;
-        Passenger passenger = passengerController.ReturnPassengerByName(passengerName);
+        Passenger passengerPassed = passengerController.ReturnPassengerByName(passengerName);
 
 
         Console.Write("Enter the desired price: ");
@@ -160,10 +160,30 @@ public class ManagerView
         string flightClassInput = Console.ReadLine();
         TripClass? flightClass = !string.IsNullOrEmpty(flightClassInput) && Enum.TryParse(flightClassInput, out TripClass parsedFlightClass) ? parsedFlightClass : (TripClass?)null;
 
-        List<Flight> filteredFlights = flightController.FiltterFlightsByParameters(price, departureDate, departureCountry, departureAirport, arrivalAirport, flightClass, passenger);
-        foreach (var flight in filteredFlights)
+        List<Flight> filteredFlights = new List<Flight>();
+        List<Passenger> passengers = passengerController.ReturnPassengers();
+        if (passengerPassed == null)
+            foreach (var passenger in passengers)
+            {
+                if (passenger.Flights.Count > 0)
+                    Console.WriteLine($"{passenger.Name}:");
+                filteredFlights = flightController.FiltterFlightsByParameters(price, departureDate, departureCountry, departureAirport, arrivalAirport, flightClass, passenger);
+                foreach (var flight in filteredFlights)
+                {
+
+                    Console.WriteLine("\t" + flight);
+                }
+            }
+        else
         {
-            Console.WriteLine(flight);
+            filteredFlights = flightController.FiltterFlightsByParameters(price, departureDate, departureCountry, departureAirport, arrivalAirport, flightClass, passengerPassed);
+            if (passengerPassed.Flights.Count > 0)
+                Console.WriteLine($"{passengerPassed.Name}:");
+            foreach (var flight in filteredFlights)
+            {
+                Console.WriteLine("\t" + flight);
+            }
+
         }
         Console.Write(filteredFlights.Count != 0 ? "The flights were found successfully. Please enter '2' to return: " : "The flights could not be found. Please try again or enter '2' to return: ");
 
