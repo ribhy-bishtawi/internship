@@ -10,7 +10,60 @@ public class PassengerController
     private List<Passenger> passengers = new List<Passenger>();
     public bool IsLoggedIn { set; get; } = false;
     private Passenger CurrentPassenger { set; get; } = new Passenger();
+    public bool AddPassengersFromCsvFile(string filePath)
+    {
+        int tempCount = 0;
+        try
+        {
+            using (var reader = new StreamReader(filePath))
+            {
+                while (!reader.EndOfStream)
+                {
+                    tempCount++;
+                    var line = reader.ReadLine();
+                    var fields = line.Split(',');
 
+                    if (fields.Length >= 2) // Check if there are enough fields
+                    {
+                        var passenger = new Passenger
+                        {
+                            Name = fields[0],
+                            Password = fields[1],
+                            Flights = new List<Flight>()
+                        };
+                        var validationContext = new ValidationContext(passenger);
+                        var validationResults = new List<ValidationResult>();
+                        if (!Validator.TryValidateObject(passenger, validationContext, validationResults, validateAllProperties: true))
+                        {
+                            Console.WriteLine($"The following validation errors were detected in the values entered on line {tempCount}:");
+                            foreach (var validationResult in validationResults)
+                            {
+                                Console.WriteLine($"\t{validationResult.ErrorMessage}");
+                            }
+                            continue;
+                        }
+
+                        passengers.Add(passenger);
+
+                    }
+                }
+            }
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error reading CSV file: " + ex.Message);
+            return false;
+        }
+
+    }
+    public void WritePassengersToCSV(string filePath, Passenger passenger)
+    {
+        using (StreamWriter writer = new StreamWriter(filePath, append: true))
+        {
+            writer.WriteLine($"{passenger.Name},{passenger.Password}");
+        }
+    }
 
     public AccountStatus AddPassenger(string name, string password)
     {
@@ -30,6 +83,7 @@ public class PassengerController
                 ;
             }
             passengers.Add(passenger);
+            WritePassengersToCSV("Data/Passengers.csv", passenger);
             return AccountStatus.Success;
         }
         return AccountStatus.AlreadyRegistered;

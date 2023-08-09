@@ -16,6 +16,8 @@ class Program
         PassengerView passengerView = new PassengerView(passengerController, flightController);
         ManagerView managerView = new ManagerView(passengerController, flightController);
         bool exitApplication = false;
+        passengerController.AddPassengersFromCsvFile("Data/Passengers.csv");
+        flightController.AddFlightsFromCsvFile("Data/Flights.csv");
         do
         {
             Console.ResetColor();
@@ -49,5 +51,3 @@ class Program
     }
 }
 
-// TODO
-// Use file system as the data storage layer
