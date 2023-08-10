@@ -53,7 +53,7 @@ public class ManagerView
     public void AddFlights()
     {
         bool temp = false;
-        string choice;
+        string? choice;
         InitUI();
         Console.WriteLine("Import Flights from a CSV File");
         Console.WriteLine("===================================");
@@ -62,12 +62,10 @@ public class ManagerView
         do
         {
             choice = Console.ReadLine();
-
             switch (choice)
             {
                 case "0":
                     return;
-                    break;
                 default:
                     temp = flightController.AddFlightsFromCsvFile(choice);
                     if (temp) return;
@@ -82,16 +80,23 @@ public class ManagerView
         InitUI();
         Console.WriteLine("Booked Flights");
         Console.WriteLine("===================================");
-        List<Passenger> passengers = passengerController.ReturnPassengers();
+        List<Passenger>? passengers = passengerController.ReturnPassengers();
         bool printed = false;
-        foreach (var passenger in passengers)
+        // TODO ask if there's another ways to handle null passengers
+        if (passengers != null)
         {
-            if (passenger.Flights.Count > 0)
-                Console.WriteLine($"{passenger.Name}:");
-            foreach (var flight in passenger.Flights)
+            foreach (var passenger in passengers)
             {
-                printed = true;
-                Console.WriteLine("\t" + flight);
+                if (passenger?.Flights?.Count > 0)
+                    Console.WriteLine($"{passenger.Name}:");
+                if (passenger?.Flights != null)
+                {
+                    foreach (var flight in passenger?.Flights!)
+                    {
+                        printed = true;
+                        Console.WriteLine("\t" + flight);
+                    }
+                }
             }
         }
         if (!printed)
@@ -131,15 +136,15 @@ public class ManagerView
         Console.Write("Enter the passenger name: ");
         string? passengerName = Console.ReadLine();
         passengerName = !string.IsNullOrEmpty(passengerName) ? passengerName : null;
-        Passenger passengerPassed = passengerController.ReturnPassengerByName(passengerName);
+        Passenger? passengerPassed = passengerController.ReturnPassengerByName(passengerName);
 
 
         Console.Write("Enter the desired price: ");
-        string priceInput = Console.ReadLine();
+        string? priceInput = Console.ReadLine();
         int? price = !string.IsNullOrEmpty(priceInput) && int.TryParse(priceInput, out int parsedPrice) ? parsedPrice : (int?)null;
 
         Console.Write("Enter the preferred departure date: ");
-        string departureDateInput = Console.ReadLine();
+        string? departureDateInput = Console.ReadLine();
         DateTime? departureDate = !string.IsNullOrEmpty(departureDateInput) && DateTime.TryParse(departureDateInput, out DateTime parsedDepartureDate) ? parsedDepartureDate : (DateTime?)null;
 
         Console.Write("Enter the departure country: ");
@@ -157,35 +162,43 @@ public class ManagerView
 
 
         Console.Write("Enter the preferred flight class: ");
-        string flightClassInput = Console.ReadLine();
+        string? flightClassInput = Console.ReadLine();
         TripClass? flightClass = !string.IsNullOrEmpty(flightClassInput) && Enum.TryParse(flightClassInput, out TripClass parsedFlightClass) ? parsedFlightClass : (TripClass?)null;
 
-        List<Flight> filteredFlights = new List<Flight>();
-        List<Passenger> passengers = passengerController.ReturnPassengers();
-        if (passengerPassed == null)
-            foreach (var passenger in passengers)
-            {
-                if (passenger.Flights.Count > 0)
-                    Console.WriteLine($"{passenger.Name}:");
-                filteredFlights = flightController.FiltterFlightsByParameters(price, departureDate, departureCountry, departureAirport, arrivalAirport, flightClass, passenger);
-                foreach (var flight in filteredFlights)
-                {
-
-                    Console.WriteLine("\t" + flight);
-                }
-            }
-        else
+        List<Flight>? filteredFlights = new List<Flight>();
+        List<Passenger>? passengers = passengerController.ReturnPassengers();
+        if (passengers != null)
         {
-            filteredFlights = flightController.FiltterFlightsByParameters(price, departureDate, departureCountry, departureAirport, arrivalAirport, flightClass, passengerPassed);
-            if (passengerPassed.Flights.Count > 0)
-                Console.WriteLine($"{passengerPassed.Name}:");
-            foreach (var flight in filteredFlights)
-            {
-                Console.WriteLine("\t" + flight);
-            }
+            if (passengerPassed == null)
+                foreach (var passenger in passengers)
+                {
+                    if (passenger.Flights?.Count > 0)
+                        Console.WriteLine($"{passenger.Name}:");
+                    filteredFlights = flightController.FiltterFlightsByParameters(price, departureDate, departureCountry, departureAirport, arrivalAirport, flightClass, passenger);
+                    if (filteredFlights != null)
+                        foreach (var flight in filteredFlights)
+                        {
 
+                            Console.WriteLine("\t" + flight);
+                        }
+                    // TODO else
+                }
+            else
+            {
+                filteredFlights = flightController.FiltterFlightsByParameters(price, departureDate, departureCountry, departureAirport, arrivalAirport, flightClass, passengerPassed);
+                if (passengerPassed.Flights?.Count > 0)
+                    Console.WriteLine($"{passengerPassed.Name}:");
+                if (filteredFlights != null)
+                    foreach (var flight in filteredFlights)
+                    {
+                        Console.WriteLine("\t" + flight);
+                    }
+                // TODO else
+
+            }
+            Console.Write(filteredFlights?.Count != 0 ? "The flights were found successfully. Please enter '2' to return: " : "The flights could not be found. Please try again or enter '2' to return: ");
         }
-        Console.Write(filteredFlights.Count != 0 ? "The flights were found successfully. Please enter '2' to return: " : "The flights could not be found. Please try again or enter '2' to return: ");
+        // TODO else
 
     }
     public void InitUI()

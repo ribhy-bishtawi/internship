@@ -9,7 +9,7 @@ public class PassengerController
 {
     private List<Passenger> passengers = new List<Passenger>();
     public bool IsLoggedIn { set; get; } = false;
-    private Passenger CurrentPassenger { set; get; } = new Passenger();
+    private Passenger? CurrentPassenger { set; get; } = new Passenger();
     public bool AddPassengersFromCsvFile(string filePath)
     {
         int tempCount = 0;
@@ -21,9 +21,9 @@ public class PassengerController
                 {
                     tempCount++;
                     var line = reader.ReadLine();
-                    var fields = line.Split(',');
+                    var fields = line?.Split(',');
 
-                    if (fields.Length >= 2) // Check if there are enough fields
+                    if (fields != null && fields.Length >= 2) // Check if there are enough fields
                     {
                         var passenger = new Passenger
                         {
@@ -65,7 +65,7 @@ public class PassengerController
         }
     }
 
-    public AccountStatus AddPassenger(string name, string password)
+    public AccountStatus AddPassenger(string? name, string? password)
     {
         bool alreadyRegistered = passengers.SingleOrDefault(passenger => passenger.Name == name) != null ? true : false;
         if (!alreadyRegistered)
@@ -88,9 +88,9 @@ public class PassengerController
         }
         return AccountStatus.AlreadyRegistered;
     }
-    public bool Login(string name, string password)
+    public bool Login(string? name, string? password)
     {
-        Passenger passenger = passengers.SingleOrDefault(passenger =>
+        Passenger? passenger = passengers.SingleOrDefault(passenger =>
         (passenger.Name == name) &&
         (passenger.Password == password));
         IsLoggedIn = passenger != null ? true : false;
@@ -109,26 +109,26 @@ public class PassengerController
 
     public FlightState BookFlight(Flight flightToBook)
     {
-        Flight alreadyBooked = CurrentPassenger.Flights.SingleOrDefault(flight =>
+        Flight? alreadyBooked = CurrentPassenger?.Flights?.SingleOrDefault(flight =>
         (flight.DepartureDate == flightToBook.DepartureDate) &&
         (flight.DepartureCountry == flightToBook.DepartureCountry) &&
         (flight.DepartureAirport == flightToBook.DepartureAirport) &&
         (flight.ArrivalAirport == flightToBook.ArrivalAirport));
         if (alreadyBooked == null)
-            CurrentPassenger.Flights.Add(flightToBook);
+            CurrentPassenger?.Flights?.Add(flightToBook);
         return alreadyBooked == null ? FlightState.Success : FlightState.AlreadyBooked;
 
     }
-    public List<Flight> PassengerBookings()
+    public List<Flight>? PassengerBookings()
     {
-        return CurrentPassenger.Flights;
+        return CurrentPassenger?.Flights;
     }
-    public List<Passenger> ReturnPassengers()
+    public List<Passenger>? ReturnPassengers()
     {
         return passengers;
     }
 
-    public Passenger ReturnPassengerByName(string? name)
+    public Passenger? ReturnPassengerByName(string? name)
     {
         return passengers.SingleOrDefault(passenger => passenger.Name == name);
     }

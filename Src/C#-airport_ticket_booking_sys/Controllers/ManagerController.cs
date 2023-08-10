@@ -14,7 +14,7 @@ public class ManagerController
     }
     public void BookFlight(Passenger passenger, Flight flight)
     {
-        passenger.Flights.Add(flight);
+        passenger.Flights?.Add(flight);
 
     }
 
