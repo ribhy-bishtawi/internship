@@ -16,6 +16,7 @@ class Program
         PassengerView passengerView = new PassengerView(passengerController, flightController);
         ManagerView managerView = new ManagerView(passengerController, flightController);
         bool exitApplication = false;
+
         passengerController.AddPassengersFromCsvFile("Data/Passengers.csv");
         flightController.AddFlightsFromCsvFile("Data/Flights.csv");
         do
@@ -29,17 +30,16 @@ class Program
             Console.WriteLine("2. Manager");
             Console.WriteLine("3. Exit");
             Console.Write("Enter your choice (1, 2, or 3): ");
-            int choice = Convert.ToInt32(Console.ReadLine());
-
+            string? choice = Console.ReadLine();
             switch (choice)
             {
-                case 1:
+                case "1":
                     exitApplication = passengerView.ShowMainScreen();
                     break;
-                case 2:
+                case "2":
                     exitApplication = managerView.ShowMainScreen();
                     break;
-                case 3:
+                case "3":
                     exitApplication = true;
                     break;
                 default:

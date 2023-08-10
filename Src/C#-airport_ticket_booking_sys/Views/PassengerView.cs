@@ -20,7 +20,7 @@ public class PassengerView
 
     public bool ShowMainScreen()
     {
-        int choice;
+        string? choice;
         do
         {
             InitUI();
@@ -31,28 +31,26 @@ public class PassengerView
             Console.WriteLine(IsLoggedIn ? "2. Show all my bookings." : "2. Register a new account");
             Console.WriteLine(IsLoggedIn ? "3. Logot." : "3. Return to the main menu.");
             Console.Write("Kindly enter your choice (1, 2, or 3): ");
-            choice = Convert.ToInt32(Console.ReadLine());
+            choice = Console.ReadLine();
             switch (choice)
             {
-                case 1:
+                case "1":
                     if (IsLoggedIn) ShowAllAvaliableFlights();
                     else Login();
                     break;
-                case 2:
+                case "2":
                     if (IsLoggedIn) ShowAllBookings();
                     else Register();
                     break;
-                case 3:
+                case "3":
                     Logout();
                     return false;
                 default:
                     Console.Write("Invalid choice. Please choose a valid option: ");
                     break;
             }
-        } while (choice != 3);
-
+        } while (choice != "3");
         return false;
-
     }
     public void Register()
     {
@@ -105,19 +103,19 @@ public class PassengerView
         {
             Console.WriteLine("No available flights found.");
             Console.Write("Enter '0' to return: ");
-            int choice;
+            string? choice;
             do
             {
-                choice = Convert.ToInt32(Console.ReadLine()!);
+                choice = Console.ReadLine();
                 switch (choice)
                 {
-                    case 0:
+                    case "0":
                         return;
                     default:
                         Console.Write("Invalid choice. Please choose a valid option: ");
                         break;
                 }
-            } while (choice != 0);
+            } while (choice != "0");
 
         }
         else
@@ -136,51 +134,64 @@ public class PassengerView
             Console.WriteLine("2. Search for a flight");
             Console.WriteLine("3. Back");
             Console.Write("Enter your choice (1, 2, or 3): ");
-            int choice;
+            string? choice;
             do
             {
-                choice = Convert.ToInt32(Console.ReadLine()!);
+                choice = Console.ReadLine();
                 switch (choice)
                 {
-                    case 1:
+                    case "1":
                         BookFlight();
                         break;
-                    case 2:
+                    case "2":
                         SearchForFlight();
                         break;
-                    case 3:
+                    case "3":
                         return;
                     default:
                         Console.Write("Invalid choice. Please choose a valid option: ");
                         break;
                 }
-            } while (choice != 3);
+            } while (choice != "3");
         }
     }
     public void BookFlight()
     {
         Console.Write("Please enter the number of flight: ");
-        int flightNumberIn = Convert.ToInt32(Console.ReadLine());
-        Flight flight = flightController.FindFlight(flightNumberIn);
-        Console.Write("Would you like to upgrade the flight class to Business (price + $50) or First Class (price + $100)? Please respond with 'yes' or 'no': ");
-        string? choice;
-        do
+        int flightNumberIn;
+        while (true)
         {
-            choice = Console.ReadLine();
-            switch (choice)
+            try
             {
-                case "yes":
-                    UpgradeFlightClass(flight);
-                    return;
-                case "no":
-                    FlightState bookState = passengerController.BookFlight(flight);
-                    Console.Write(bookState == FlightState.Success ? "The flight has been booked successfully. Please enter '3' to return: " : "The flight is already booked. You can make changes in the booked flights screen. Please enter '3' to return: ");
-                    return;
-                default:
-                    Console.Write("Invalid choice. Please choose a valid option: ");
-                    break;
+                flightNumberIn = Convert.ToInt32(Console.ReadLine());
+                Flight flight = flightController.FindFlight(flightNumberIn);
+                Console.Write("Would you like to upgrade the flight class to Business (price + $50) or First Class (price + $100)? Please respond with 'yes' or 'no': ");
+                string? choice;
+                do
+                {
+                    choice = Console.ReadLine();
+                    switch (choice)
+                    {
+                        case "yes":
+                            UpgradeFlightClass(flight);
+                            return;
+                        case "no":
+                            FlightState bookState = passengerController.BookFlight(flight);
+                            Console.Write(bookState == FlightState.Success ? "The flight has been booked successfully. Please enter '3' to return: " : "The flight is already booked. You can make changes in the booked flights screen. Please enter '3' to return: ");
+                            return;
+                        default:
+                            Console.Write("Invalid choice. Please choose a valid option: ");
+                            break;
+                    }
+                } while (choice != "no");
+                break;
             }
-        } while (choice != "no");
+            catch
+            {
+                Console.Write("PLeas enter a vaild number: ");
+
+            }
+        }
     }
 
     public void UpgradeFlightClass(Flight flight)
@@ -191,28 +202,28 @@ public class PassengerView
         Console.WriteLine("3. Exit");
         Console.Write("Enter your choice (1, 2, or 3): ");
         Flight flightCopy = flight.DeepCopy();
-        int choice;
+        string? choice;
         do
         {
-            choice = Convert.ToInt32(Console.ReadLine());
+            choice = Console.ReadLine();
             switch (choice)
             {
-                case 1:
+                case "1":
                     flightCopy.TripClass = TripClass.FirstClass;
                     flightCopy.Price += 100;
                     break;
-                case 2:
+                case "2":
                     flightCopy.TripClass = TripClass.Business;
                     flightCopy.Price += 50;
 
                     break;
-                case 3:
+                case "3":
                     break;
                 default:
                     Console.Write("Invalid choice. Please choose a valid option: ");
                     break;
             }
-        } while (choice != 1 && choice != 2 && choice != 3);
+        } while (choice != "1" && choice != "2" && choice != "3");
         FlightState bookState = passengerController.BookFlight(flightCopy);
         Console.Write(bookState == FlightState.Success ? "The flight has been booked successfully. Please enter '3' to return: " : "The flight is already booked. You can make changes in the booked flights screen. Please enter '3' to return: ");
     }
@@ -271,19 +282,19 @@ public class PassengerView
             {
                 Console.WriteLine("No available flights found.");
                 Console.Write("Enter '0' to return: ");
-                int choice;
+                string? choice;
                 do
                 {
-                    choice = Convert.ToInt32(Console.ReadLine());
+                    choice = Console.ReadLine();
                     switch (choice)
                     {
-                        case 0:
+                        case "0":
                             return;
                         default:
                             Console.Write("Invalid choice. Please choose a valid option: ");
                             break;
                     }
-                } while (choice != 0);
+                } while (choice != "0");
             }
             else
             {
@@ -300,26 +311,26 @@ public class PassengerView
                 Console.WriteLine("2. Modify the flight");
                 Console.WriteLine("3. Back");
                 Console.Write("Enter your choice (1, 2, or 3): ");
-                int choice;
+                string? choice;
                 do
                 {
-                    choice = Convert.ToInt32(Console.ReadLine());
+                    choice = Console.ReadLine();
 
                     switch (choice)
                     {
-                        case 1:
+                        case "1":
                             Cancel();
                             break;
-                        case 2:
+                        case "2":
                             Modify();
                             break;
-                        case 3:
+                        case "3":
                             return;
                         default:
                             Console.Write("Invalid choice. Please choose a valid option: ");
                             break;
                     }
-                } while (choice != 3);
+                } while (choice != "3");
             }
         }
     }
@@ -348,55 +359,75 @@ public class PassengerView
     public void Modify()
     {
         Console.Write("Please enter the flight number to modify it: ");
-        int flightNum = Convert.ToInt32(Console.ReadLine());
-        List<Flight>? bookedFlights = passengerController.PassengerBookings();
-        Flight? flightToModify = bookedFlights?.ElementAt(--flightNum!);
-        Console.WriteLine("Please select an option:");
-        int selectedChoice = 0;
-        switch (flightToModify?.TripClass)
+        int flightNum;
+        while (true)
         {
-            case TripClass.Economy:
-                selectedChoice = 0;
-                Console.WriteLine("1. Upgrade to first class");
-                Console.WriteLine("2. Upgrade to business class");
-                break;
-            case TripClass.Business:
-                selectedChoice = 2;
-                Console.WriteLine("1. Upgrade to first class");
-                Console.WriteLine("2. Downgrade to economy class");
-                break;
-            case TripClass.FirstClass:
-                selectedChoice = 4;
-                Console.WriteLine("1. Downgrade to business class");
-                Console.WriteLine("2. Downgrade to economy class");
-                break;
-        }
-        Console.WriteLine("3. Exit");
-        Console.Write("Enter your choice (1, 2, or 3): ");
-        int choice;
-        do
-        {
-            choice = Convert.ToInt32(Console.ReadLine());
-            selectedChoice += choice;
-            switch (selectedChoice)
+            try
             {
-                case 1:
-                case 3:
-                    flightController.ChangeClass(flightToModify, TripClass.FirstClass);
-                    break;
-                case 2:
-                case 5:
-                    flightController.ChangeClass(flightToModify, TripClass.Business);
-                    break;
-                case 4:
-                    flightController.ChangeClass(flightToModify, TripClass.Economy);
-                    break;
-                default:
-                    Console.Write("Invalid choice. Please choose a valid option: ");
-                    break;
+                flightNum = Convert.ToInt32(Console.ReadLine());
+                List<Flight>? bookedFlights = passengerController.PassengerBookings();
+                Flight? flightToModify = bookedFlights?.ElementAt(--flightNum!);
+                Console.WriteLine("Please select an option:");
+                int selectedChoice = 0;
+                switch (flightToModify?.TripClass)
+                {
+                    case TripClass.Economy:
+                        selectedChoice = 0;
+                        Console.WriteLine("1. Upgrade to first class");
+                        Console.WriteLine("2. Upgrade to business class");
+                        break;
+                    case TripClass.Business:
+                        selectedChoice = 2;
+                        Console.WriteLine("1. Upgrade to first class");
+                        Console.WriteLine("2. Downgrade to economy class");
+                        break;
+                    case TripClass.FirstClass:
+                        selectedChoice = 4;
+                        Console.WriteLine("1. Downgrade to business class");
+                        Console.WriteLine("2. Downgrade to economy class");
+                        break;
+                }
+                Console.WriteLine("3. Exit");
+                Console.Write("Enter your choice (1, 2, or 3): ");
+                int choice;
+                while (true)
+                {
+                    try
+                    {
+                        choice = Convert.ToInt32(Console.ReadLine());
+                        selectedChoice += choice;
+                        switch (selectedChoice)
+                        {
+                            case 1:
+                            case 3:
+                                flightController.ChangeClass(flightToModify, TripClass.FirstClass);
+                                break;
+                            case 2:
+                            case 5:
+                                flightController.ChangeClass(flightToModify, TripClass.Business);
+                                break;
+                            case 4:
+                                flightController.ChangeClass(flightToModify, TripClass.Economy);
+                                break;
+                            default:
+                                Console.Write("Invalid choice. Please choose a valid option: ");
+                                break;
+                        }
+                        Console.Write("The flight has been successfully updated. Please press '3' to return: ");
+                        break;
+                    }
+                    catch
+                    {
+                        Console.Write("PLeas enter a vaild number: ");
+                    }
+                };
+                break;
             }
-        } while (choice != 1 && choice != 2 && choice != 3);
-        Console.Write("The flight has been successfully updated. Please press '3' to return: ");
+            catch
+            {
+                Console.Write("PLeas enter a vaild number: ");
+            }
+        }
     }
 
     public void InitUI()

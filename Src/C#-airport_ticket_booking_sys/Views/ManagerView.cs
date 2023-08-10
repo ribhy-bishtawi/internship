@@ -21,7 +21,7 @@ public class ManagerView
 
     public bool ShowMainScreen()
     {
-        int choice;
+        string? choice;
         do
         {
             InitUI();
@@ -32,22 +32,22 @@ public class ManagerView
             Console.WriteLine("2. Import flights from a CSV file");
             Console.WriteLine("3. Logout");
             Console.Write("Please enter the number corresponding to your desired action (1, 2, or 3): ");
-            choice = Convert.ToInt32(Console.ReadLine());
+            choice = Console.ReadLine();
             switch (choice)
             {
-                case 1:
+                case "1":
                     ShowBookedFlights();
                     break;
-                case 2:
+                case "2":
                     AddFlights();
                     break;
-                case 3:
+                case "3":
                     return false;
                 default:
                     Console.Write("Invalid choice. Please choose a valid option: ");
                     break;
             }
-        } while (choice != 3);
+        } while (choice != "3");
         return false;
     }
     public void AddFlights()
@@ -107,22 +107,22 @@ public class ManagerView
             Console.WriteLine("1. Search for a flight");
             Console.WriteLine("2. Back");
             Console.Write("Enter your choice (1, or 2): ");
-            int choice;
+            string? choice;
             do
             {
-                choice = Convert.ToInt32(Console.ReadLine());
+                choice = Console.ReadLine();
                 switch (choice)
                 {
-                    case 1:
+                    case "1":
                         SearchForFlight();
                         break;
-                    case 2:
+                    case "2":
                         return;
                     default:
                         Console.Write("Invalid choice. Please choose a valid option: ");
                         break;
                 }
-            } while (choice != 2);
+            } while (choice != "2");
 
         }
         Console.Write("Press any key to continue.....");
