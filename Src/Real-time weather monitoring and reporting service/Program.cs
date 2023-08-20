@@ -1,7 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 class Program
-
 {
     static void Main(string[] args)
     {
@@ -43,11 +42,13 @@ class Program
 
         if (IsJson(inputData))
         {
-            weatherData.FromJson(inputData!);
+            weatherData.InputStrategy = new JsonStrategy();
+            weatherData.ProcessInput(inputData);
         }
         else if (IsXml(inputData))
         {
-            weatherData.FromXml(inputData!);
+            weatherData.InputStrategy = new XMLStrategy();
+            weatherData.ProcessInput(inputData);
         }
         else
         {
@@ -84,5 +85,9 @@ public class BotConfiguration
     public bool? Enabled { get; set; }
     public int? HumidityThreshold { get; set; }
     public int? TemperatureThreshold { get; set; }
+
     public string? Message { get; set; }
 }
+// TODO
+// Ask about the strategy pattern.
+// Ask how to use the Enabled Properties. 

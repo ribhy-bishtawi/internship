@@ -1,4 +1,3 @@
-using Newtonsoft.Json;
 using System.Xml.Serialization;
 
 public class WeatherData
@@ -7,6 +6,7 @@ public class WeatherData
     public double? Temperature { get; set; }
     public double? Humidity { get; set; }
     private List<IWeatherObserver> observers = new List<IWeatherObserver>();
+    public IInputStrategy InputStrategy { get; set; }
 
     public void Subscribe(IWeatherObserver observer)
     {
@@ -26,40 +26,14 @@ public class WeatherData
         }
     }
 
-    public string ToJson()
+
+    public void ProcessInput(string input)
     {
-        return JsonConvert.SerializeObject(this);
-    }
-
-    public void FromJson(string json)
-    {
-        WeatherData newData = JsonConvert.DeserializeObject<WeatherData>(json)!;
-        Location = newData.Location;
-        Temperature = newData.Temperature;
-        Humidity = newData.Humidity;
-        NotifyObservers();
-
-
-    }
-
-    public string ToXml()
-    {
-        XmlSerializer serializer = new XmlSerializer(typeof(WeatherData));
-        StringWriter stringWriter = new StringWriter();
-        serializer.Serialize(stringWriter, this);
-        return stringWriter.ToString();
-    }
-
-    public void FromXml(string xml)
-    {
-        XmlSerializer serializer = new XmlSerializer(typeof(WeatherData));
-        StringReader stringReader = new StringReader(xml);
-        WeatherData newData = (WeatherData)serializer.Deserialize(stringReader)!;
-        Location = newData.Location;
-        Temperature = newData.Temperature;
-        Humidity = newData.Humidity;
+        WeatherData weatherData = InputStrategy.ParseInput(input);
+        Location = weatherData.Location;
+        Temperature = weatherData.Temperature;
+        Humidity = weatherData.Humidity;
         NotifyObservers();
     }
-
 
 }
