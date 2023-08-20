@@ -1,6 +1,9 @@
+namespace WatherSys.Models.Bots;
 
 using System;
 using System.Collections.Generic;
+using WatherSys.Models.Interfaces;
+
 public class SunBot : IWeatherObserver
 {
     public bool? Enabled { get; set; }

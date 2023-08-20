@@ -1,5 +1,8 @@
+namespace WatherSys.Models.Bots;
+
 using System;
 using System.Collections.Generic;
+using WatherSys.Models.Interfaces;
 
 public class RainBot : IWeatherObserver
 {
