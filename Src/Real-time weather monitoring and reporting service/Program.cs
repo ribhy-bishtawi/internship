@@ -1,32 +1,16 @@
 ﻿using System.Text.RegularExpressions;
 using Newtonsoft.Json;
+using WatherSys.Models;
+using WatherSys.Models.Bots;
+using WatherSys.Models.Strategies;
+
+
 class Program
 {
     static void Main(string[] args)
     {
-        string configJson = File.ReadAllText("Configuration.json");
-        BotConfigurations botConfigurations = JsonConvert.DeserializeObject<BotConfigurations>(configJson)!;
-
-        RainBot rainBot = new RainBot
-        {
-            Enabled = botConfigurations.RainBot!.Enabled!,
-            HumidityThreshold = botConfigurations.RainBot.HumidityThreshold,
-            Message = botConfigurations.RainBot.Message
-        };
-
-        SunBot sunBot = new SunBot
-        {
-            Enabled = botConfigurations.SunBot!.Enabled!,
-            TemperatureThreshold = botConfigurations.SunBot.TemperatureThreshold,
-            Message = botConfigurations.SunBot.Message
-        };
-
-        SnowBot snowBot = new SnowBot
-        {
-            Enabled = botConfigurations.SnowBot!.Enabled!,
-            TemperatureThreshold = botConfigurations.SnowBot.TemperatureThreshold,
-            Message = botConfigurations.SnowBot.Message
-        };
+        BotConfigurations botConfigurations = LoadConfigrations();
+        WeatherData weatherData = InitializeWeatherData(botConfigurations);
 
         Console.WriteLine("Enter weather data: ");
         string? inputData = Console.ReadLine();
@@ -35,27 +19,77 @@ class Program
             Console.WriteLine("Please enter a valid format (JSON or XML)");
             return;
         }
+
+        ProcessInput(weatherData, inputData);
+
+    }
+    static BotConfigurations LoadConfigrations()
+    {
+        string configJson = File.ReadAllText("Configuration.json");
+        BotConfigurations botConfigurations = JsonConvert.DeserializeObject<BotConfigurations>(configJson)!;
+        return botConfigurations;
+    }
+
+    static WeatherData InitializeWeatherData(BotConfigurations botConfigurations)
+    {
+        RainBot rainBot = CreateRainBot(botConfigurations.RainBot!);
+        SunBot sunBot = CreateSunBot(botConfigurations.SunBot!);
+        SnowBot snowBot = CreateSnowBot(botConfigurations.SnowBot!);
+
         WeatherData weatherData = new WeatherData();
         weatherData.Subscribe(rainBot);
         weatherData.Subscribe(sunBot);
         weatherData.Subscribe(snowBot);
 
+        return weatherData;
+    }
+    static RainBot CreateRainBot(BotConfiguration configuration)
+    {
+        return new RainBot
+        {
+            Enabled = configuration.Enabled ?? false,
+            HumidityThreshold = configuration.HumidityThreshold,
+            Message = configuration.Message
+        };
+    }
+    static SunBot CreateSunBot(BotConfiguration configuration)
+    {
+        return new SunBot
+        {
+            Enabled = configuration.Enabled ?? false,
+            TemperatureThreshold = configuration.TemperatureThreshold,
+            Message = configuration.Message
+        };
+    }
+
+    static SnowBot CreateSnowBot(BotConfiguration configuration)
+    {
+        return new SnowBot
+        {
+            Enabled = configuration.Enabled ?? false,
+            TemperatureThreshold = configuration.TemperatureThreshold,
+            Message = configuration.Message
+        };
+    }
+
+    static void ProcessInput(WeatherData weatherData, string inputData)
+    {
         if (IsJson(inputData))
         {
             weatherData.InputStrategy = new JsonStrategy();
-            weatherData.ProcessInput(inputData);
         }
         else if (IsXml(inputData))
         {
             weatherData.InputStrategy = new XMLStrategy();
-            weatherData.ProcessInput(inputData);
         }
         else
         {
             Console.WriteLine("Unknown format.");
+            return;
         }
-
+        weatherData.ProcessInput(inputData);
     }
+
     static bool IsJson(string input)
     {
         return input.TrimStart().StartsWith("{") && input.TrimEnd().EndsWith("}");
@@ -67,27 +101,5 @@ class Program
     }
 
 }
-
-
-
-public class BotConfigurations
-{
-    public BotConfiguration? RainBot { get; set; }
-
-    public BotConfiguration? SunBot { get; set; }
-
-    public BotConfiguration? SnowBot { get; set; }
-}
-
-public class BotConfiguration
-{
-
-    public bool? Enabled { get; set; }
-    public int? HumidityThreshold { get; set; }
-    public int? TemperatureThreshold { get; set; }
-
-    public string? Message { get; set; }
-}
 // TODO
-// Ask about the strategy pattern.
-// Ask how to use the Enabled Properties. 
+// Ask how to use the Enabled propertiy. 

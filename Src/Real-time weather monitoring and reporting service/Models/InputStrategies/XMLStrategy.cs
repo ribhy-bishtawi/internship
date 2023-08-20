@@ -1,5 +1,8 @@
 using System.Xml.Serialization;
+using WatherSys.Models;
+using WatherSys.Models.Interfaces;
 
+namespace WatherSys.Models.Strategies;
 class XMLStrategy : IInputStrategy
 {
     public WeatherData ParseInput(string input)

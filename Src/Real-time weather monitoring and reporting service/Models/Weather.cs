@@ -1,4 +1,7 @@
+namespace WatherSys.Models;
+
 using System.Xml.Serialization;
+using WatherSys.Models.Interfaces;
 
 public class WeatherData
 {
@@ -6,7 +9,8 @@ public class WeatherData
     public double? Temperature { get; set; }
     public double? Humidity { get; set; }
     private List<IWeatherObserver> observers = new List<IWeatherObserver>();
-    public IInputStrategy InputStrategy { get; set; }
+    [XmlIgnore]
+    public IInputStrategy? InputStrategy { get; set; }
 
     public void Subscribe(IWeatherObserver observer)
     {
@@ -29,7 +33,7 @@ public class WeatherData
 
     public void ProcessInput(string input)
     {
-        WeatherData weatherData = InputStrategy.ParseInput(input);
+        WeatherData weatherData = InputStrategy!.ParseInput(input);
         Location = weatherData.Location;
         Temperature = weatherData.Temperature;
         Humidity = weatherData.Humidity;
