@@ -15,7 +15,4 @@ public class RainBot : IWeatherObserver
             Console.WriteLine($"RainBot: \"{Message}\" ");
         }
     }
-
-
-
 }
