@@ -23,7 +23,7 @@ public class FlightController
                     var line = reader.ReadLine();
                     var fields = line?.Split(',');
 
-                    if (fields != null && fields.Length >= 6)
+                    if (fields?.Length >= 6)
                     {
                         if (TryCreateFlightFromFields(fields, out Flight? flight, lineNum))
                         {

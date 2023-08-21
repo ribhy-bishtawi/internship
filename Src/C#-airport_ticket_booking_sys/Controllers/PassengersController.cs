@@ -12,39 +12,22 @@ public class PassengerController
     private Passenger? CurrentPassenger { set; get; } = new Passenger();
     public bool AddPassengersFromCsvFile(string filePath)
     {
-        int tempCount = 0;
+        int lineNum = 0;
         try
         {
             using (var reader = new StreamReader(filePath))
             {
                 while (!reader.EndOfStream)
                 {
-                    tempCount++;
+                    lineNum++;
                     var line = reader.ReadLine();
                     var fields = line?.Split(',');
-
                     if (fields != null && fields.Length >= 2) // Check if there are enough fields
                     {
-                        var passenger = new Passenger
+                        if (TryCreateFlightFromFields(fields, out Passenger? passenger, lineNum))
                         {
-                            Name = fields[0],
-                            Password = fields[1],
-                            Flights = new List<Flight>()
-                        };
-                        var validationContext = new ValidationContext(passenger);
-                        var validationResults = new List<ValidationResult>();
-                        if (!Validator.TryValidateObject(passenger, validationContext, validationResults, validateAllProperties: true))
-                        {
-                            Console.WriteLine($"The following validation errors were detected in the values entered on line {tempCount}:");
-                            foreach (var validationResult in validationResults)
-                            {
-                                Console.WriteLine($"\t{validationResult.ErrorMessage}");
-                            }
-                            continue;
+                            passengers.Add(passenger!);
                         }
-
-                        passengers.Add(passenger);
-
                     }
                 }
             }
@@ -56,6 +39,29 @@ public class PassengerController
             return false;
         }
 
+    }
+
+    private bool TryCreateFlightFromFields(string[] fields, out Passenger? passenger, int lineNum)
+    {
+        passenger = null;
+        passenger = new Passenger
+        {
+            Name = fields[0],
+            Password = fields[1],
+            Flights = new List<Flight>()
+        };
+        var validationContext = new ValidationContext(passenger);
+        var validationResults = new List<ValidationResult>();
+        if (!Validator.TryValidateObject(passenger, validationContext, validationResults, validateAllProperties: true))
+        {
+            Console.WriteLine($"The following validation errors were detected in the values entered on line {lineNum}:");
+            foreach (var validationResult in validationResults)
+            {
+                Console.WriteLine($"\t{validationResult.ErrorMessage}");
+            }
+            return false;
+        }
+        return true;
     }
     public void WritePassengersToCSV(string filePath, Passenger passenger)
     {
