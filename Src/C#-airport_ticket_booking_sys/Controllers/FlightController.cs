@@ -10,84 +10,98 @@ namespace AirportTrackingSystem.Controllers;
 public class FlightController
 {
     private List<Flight> flights = new List<Flight>();
-
-    public bool AddFlightsFromCsvFile(string? filePath)
+    public bool AddFlightsFromCsvFile(string filePath)
     {
-        int tempCount = 0;
-        // TODO Possible null reference argument for parameter 'path'
-        // Ask if there's another way to handle null
-        if (filePath != null)
+        try
         {
-            try
+            using (var reader = new StreamReader(filePath))
             {
-                using (var reader = new StreamReader(filePath))
+                int lineNum = 0;
+                while (!reader.EndOfStream)
                 {
-                    while (!reader.EndOfStream)
+                    lineNum++;
+                    var line = reader.ReadLine();
+                    var fields = line?.Split(',');
+
+                    if (fields != null && fields.Length >= 6)
                     {
-                        tempCount++;
-                        var line = reader.ReadLine();
-                        var fields = line?.Split(',');
-                        // TODO same question as above 
-                        if (fields != null)
+                        if (TryCreateFlightFromFields(fields, out Flight? flight, lineNum))
                         {
-
-                            if (fields.Length >= 6) // Check if there are enough fields
-                            {
-                                var flight = new Flight
-                                {
-                                    Price = int.Parse(fields[0]),
-                                    DepartureCountry = fields[1],
-                                    DepartureDate = DateTime.TryParse(fields[2], out DateTime departureDate) ? departureDate : (DateTime?)null,
-                                    DepartureAirport = fields[3],
-                                    ArrivalAirport = fields[4],
-                                    TripClass = Enum.TryParse(fields[5], out TripClass flightClass) ? flightClass : (TripClass?)null
-                                };
-                                var validationContext = new ValidationContext(flight);
-                                var validationResults = new List<ValidationResult>();
-
-                                if (!Validator.TryValidateObject(flight, validationContext, validationResults, validateAllProperties: true))
-                                {
-                                    Console.WriteLine($"The following validation errors were detected in the values entered on line {tempCount}:");
-                                    foreach (var validationResult in validationResults)
-                                    {
-                                        Console.WriteLine($"\t{validationResult.ErrorMessage}");
-                                    }
-                                    continue;
-                                }
-
-                                flights.Add(flight);
-
-                            }
+                            flights.Add(flight!);
                         }
                     }
                 }
-                return true;
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error reading CSV file: " + ex.Message);
-                return false;
-            }
+            return true;
         }
-        Console.WriteLine("Please enter a vail file path");
-        return false;
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error reading CSV file: " + ex.Message);
+            return false;
+        }
+    }
+
+    private bool TryCreateFlightFromFields(string[] fields, out Flight? flight, int lineNum)
+    {
+        flight = null;
+
+        if (!int.TryParse(fields[0], out int price))
+        {
+            Console.WriteLine($"Invalid price on line {lineNum}");
+            return false;
+        }
+
+        DateTime? departureDate = DateTime.TryParse(fields[2], out DateTime parsedDepartureDate)
+            ? parsedDepartureDate
+            : (DateTime?)null;
+
+        if (!Enum.TryParse(fields[5], out TripClass flightClass))
+        {
+            Console.WriteLine($"Invalid flight class on line {lineNum}");
+            return false;
+        }
+
+        flight = new Flight
+        {
+            Price = price,
+            DepartureCountry = fields[1],
+            DepartureDate = departureDate,
+            DepartureAirport = fields[3],
+            ArrivalAirport = fields[4],
+            TripClass = flightClass
+        };
+
+        var validationContext = new ValidationContext(flight);
+        var validationResults = new List<ValidationResult>();
+
+        if (!Validator.TryValidateObject(flight, validationContext, validationResults, validateAllProperties: true))
+        {
+            Console.WriteLine($"The following validation errors were detected in the values entered on line {lineNum}:");
+            foreach (var validationResult in validationResults)
+            {
+                Console.WriteLine($"\t{validationResult.ErrorMessage}");
+            }
+            return false;
+        }
+
+        return true;
     }
 
     public List<Flight> ShowAllAvaliableFlights()
     {
         return flights;
     }
-    public List<Flight>? FiltterFlightsByParameters(int? price, DateTime? depDate, string? depCountry, string? depAirport, string? arrAirport, TripClass? flightClass, Passenger? passenger = null)
+    public List<Flight>? FiltterFlightsByParameters(Flight searchFlight, Passenger? passenger = null)
     {
         List<Flight>? tempFlights = passenger != null ? passenger.Flights : flights;
         var filteredFlights = tempFlights?
     .Where(flight =>
-        (price == null || flight.Price == price) &&
-        (depDate == null || flight.DepartureDate == depDate) &&
-        (depCountry == null || flight.DepartureCountry == depCountry) &&
-        (depAirport == null || flight.DepartureAirport == depAirport) &&
-        (arrAirport == null || flight.ArrivalAirport == arrAirport) &&
-        (flightClass == null || flight.TripClass == flightClass)
+        (searchFlight.Price == null || flight.Price == searchFlight.Price) &&
+        (searchFlight.DepartureDate == null || flight.DepartureDate == searchFlight.DepartureDate) &&
+        (searchFlight.DepartureCountry == null || flight.DepartureCountry == searchFlight.DepartureCountry) &&
+        (searchFlight.DepartureAirport == null || flight.DepartureAirport == searchFlight.DepartureAirport) &&
+        (searchFlight.ArrivalAirport == null || flight.ArrivalAirport == searchFlight.ArrivalAirport) &&
+        (searchFlight.TripClass == null || flight.TripClass == searchFlight.TripClass)
     )
     .ToList();
         return filteredFlights;

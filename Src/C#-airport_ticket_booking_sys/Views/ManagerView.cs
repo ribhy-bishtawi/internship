@@ -52,154 +52,250 @@ public class ManagerView
     }
     public void AddFlights()
     {
-        bool temp = false;
-        string? choice;
+        bool addedSuccessfully = false;
+        string? filePath;
+
         InitUI();
         Console.WriteLine("Import Flights from a CSV File");
         Console.WriteLine("===================================");
-        Console.Write("Please enter the file path to import flights from a CSV file,");
-        Console.Write("or enter '0' to exit: ");
+
         do
         {
-            choice = Console.ReadLine();
-            switch (choice)
+            Console.Write("Please enter the file path to import flights from a CSV file,");
+            Console.Write("or enter '0' to exit: ");
+            filePath = Console.ReadLine()?.Trim();
+            if (string.IsNullOrEmpty(filePath))
             {
-                case "0":
-                    return;
-                default:
-                    temp = flightController.AddFlightsFromCsvFile(choice);
-                    if (temp) return;
-                    else Console.Write("Please try again or enter '0' to return to the main menu: ");
-                    break;
+                Console.WriteLine("File path cannot be empty. Please try again.");
+                continue;
             }
 
-        } while (choice != "0");
+            if (filePath == "0")
+            {
+                return;
+            }
+
+            addedSuccessfully = flightController.AddFlightsFromCsvFile(filePath);
+            if (addedSuccessfully)
+            {
+                return;
+            }
+        } while (filePath != "0");
     }
+
     public void ShowBookedFlights()
     {
         InitUI();
         Console.WriteLine("Booked Flights");
         Console.WriteLine("===================================");
+
         List<Passenger>? passengers = passengerController.ReturnPassengers();
-        bool printed = false;
-        // TODO ask if there's another ways to handle null passengers
-        if (passengers != null)
+
+        if (passengers?.Count == 0)
         {
-            foreach (var passenger in passengers)
+            Console.WriteLine("No signed up passengers yet.");
+            WaitForUser();
+            return;
+        }
+
+        bool printed = false;
+        foreach (var passenger in passengers!)
+        {
+            if (passenger.Flights?.Count > 0)
             {
-                if (passenger?.Flights?.Count > 0)
-                    Console.WriteLine($"{passenger.Name}:");
-                if (passenger?.Flights != null)
-                {
-                    foreach (var flight in passenger?.Flights!)
-                    {
-                        printed = true;
-                        Console.WriteLine("\t" + flight);
-                    }
-                }
+                Console.WriteLine($"{passenger.Name}:");
+                PrintFlights(passenger.Flights);
+                printed = true;
             }
         }
-        if (!printed)
-            Console.WriteLine("No booked flights yet.");
+
+        if (printed)
+        {
+            ShowOptions();
+        }
         else
         {
-            Console.WriteLine("Please select an option:");
-            Console.WriteLine("1. Search for a flight");
-            Console.WriteLine("2. Back");
-            Console.Write("Enter your choice (1, or 2): ");
-            string? choice;
-            do
-            {
-                choice = Console.ReadLine();
-                switch (choice)
-                {
-                    case "1":
-                        SearchForFlight();
-                        break;
-                    case "2":
-                        return;
-                    default:
-                        Console.Write("Invalid choice. Please choose a valid option: ");
-                        break;
-                }
-            } while (choice != "2");
-
+            Console.WriteLine("No booked flights yet.");
         }
-        Console.Write("Press any key to continue.....");
-        Console.ReadLine();
+    }
+
+    private void PrintFlights(List<Flight> flights)
+    {
+        foreach (var flight in flights)
+        {
+            Console.WriteLine("\t" + flight);
+        }
+    }
+
+    private void ShowOptions()
+    {
+        Console.WriteLine("Please select an option:");
+        Console.WriteLine("1. Search for a flight");
+        Console.WriteLine("2. Back");
+        Console.Write("Enter your choice (1, or 2): ");
+
+        string? choice;
+        do
+        {
+            choice = Console.ReadLine();
+            switch (choice)
+            {
+                case "1":
+                    SearchForFlight();
+                    break;
+                case "2":
+                    return;
+                default:
+                    Console.Write("Invalid choice. Please choose a valid option: ");
+                    break;
+            }
+        } while (choice != "2");
+    }
+
+    private void WaitForUser()
+    {
+        Console.Write("Press any key to exit...");
+        Console.ReadKey();
     }
 
     public void SearchForFlight()
     {
         Console.WriteLine("You can search using any of the following parameters (leave it blank if you don't wish to use it):");
 
-        Console.Write("Enter the passenger name: ");
-        string? passengerName = Console.ReadLine();
-        passengerName = !string.IsNullOrEmpty(passengerName) ? passengerName : null;
+        string? passengerName = GetUserInput("Enter the passenger name: ");
         Passenger? passengerPassed = passengerController.ReturnPassengerByName(passengerName);
 
-
-        Console.Write("Enter the desired price: ");
-        string? priceInput = Console.ReadLine();
-        int? price = !string.IsNullOrEmpty(priceInput) && int.TryParse(priceInput, out int parsedPrice) ? parsedPrice : (int?)null;
-
-        Console.Write("Enter the preferred departure date: ");
-        string? departureDateInput = Console.ReadLine();
-        DateTime? departureDate = !string.IsNullOrEmpty(departureDateInput) && DateTime.TryParse(departureDateInput, out DateTime parsedDepartureDate) ? parsedDepartureDate : (DateTime?)null;
-
-        Console.Write("Enter the departure country: ");
-        string? departureCountry = Console.ReadLine();
-        departureCountry = !string.IsNullOrEmpty(departureCountry) ? departureCountry : null;
-
-        Console.Write("Enter the departure airport: ");
-        string? departureAirport = Console.ReadLine();
-        departureAirport = !string.IsNullOrEmpty(departureAirport) ? departureAirport : null;
+        Flight searchFlight = CreateSearchFlight();
 
 
-        Console.Write("Enter the arrival airport: ");
-        string? arrivalAirport = Console.ReadLine();
-        arrivalAirport = !string.IsNullOrEmpty(arrivalAirport) ? arrivalAirport : null;
-
-
-        Console.Write("Enter the preferred flight class: ");
-        string? flightClassInput = Console.ReadLine();
-        TripClass? flightClass = !string.IsNullOrEmpty(flightClassInput) && Enum.TryParse(flightClassInput, out TripClass parsedFlightClass) ? parsedFlightClass : (TripClass?)null;
-
-        List<Flight>? filteredFlights = new List<Flight>();
+        List<Flight>? filteredFlights;
         List<Passenger>? passengers = passengerController.ReturnPassengers();
-        if (passengers != null)
+
+        if (passengers?.Count == 0)
         {
-            if (passengerPassed == null)
-                foreach (var passenger in passengers)
-                {
-                    if (passenger.Flights?.Count > 0)
-                        Console.WriteLine($"{passenger.Name}:");
-                    filteredFlights = flightController.FiltterFlightsByParameters(price, departureDate, departureCountry, departureAirport, arrivalAirport, flightClass, passenger);
-                    if (filteredFlights != null)
-                        foreach (var flight in filteredFlights)
-                        {
-
-                            Console.WriteLine("\t" + flight);
-                        }
-                    // TODO else
-                }
-            else
-            {
-                filteredFlights = flightController.FiltterFlightsByParameters(price, departureDate, departureCountry, departureAirport, arrivalAirport, flightClass, passengerPassed);
-                if (passengerPassed.Flights?.Count > 0)
-                    Console.WriteLine($"{passengerPassed.Name}:");
-                if (filteredFlights != null)
-                    foreach (var flight in filteredFlights)
-                    {
-                        Console.WriteLine("\t" + flight);
-                    }
-                // TODO else
-
-            }
-            Console.Write(filteredFlights?.Count != 0 ? "The flights were found successfully. Please enter '2' to return: " : "The flights could not be found. Please try again or enter '2' to return: ");
+            Console.Write("No signed up passengers");
+            WaitForUser();
+            return;
         }
-        // TODO else
 
+        if (passengerPassed == null)
+        {
+            filteredFlights = GetFilteredFlightsForAllPassengers(searchFlight);
+        }
+        else
+        {
+            filteredFlights = GetFilteredFlightsForPassenger(passengerPassed, searchFlight);
+        }
+
+        PrintFilteredFlights(filteredFlights);
+
+    }
+    private Flight CreateSearchFlight()
+    {
+        int? price = GetNullableIntInput("Enter the desired price: ");
+        DateTime? departureDate = GetNullableDateTimeInput("Enter the preferred departure date: ");
+        string? departureCountry = GetUserInput("Enter the departure country: ");
+        string? departureAirport = GetUserInput("Enter the departure airport: ");
+        string? arrivalAirport = GetUserInput("Enter the arrival airport: ");
+        TripClass? flightClass = GetNullableEnumInput<TripClass>("Enter the preferred flight class: ");
+
+        return new Flight
+        {
+            Price = price,
+            DepartureDate = departureDate,
+            DepartureCountry = departureCountry,
+            DepartureAirport = departureAirport,
+            ArrivalAirport = arrivalAirport,
+            TripClass = flightClass
+        };
+    }
+
+    private List<Flight>? GetFilteredFlightsForAllPassengers(Flight searchFlight)
+    {
+        List<Passenger>? passengers = passengerController.ReturnPassengers();
+        if (passengers == null)
+        {
+            return null;
+        }
+
+        List<Flight>? allFilteredFlights = new List<Flight>();
+
+        foreach (var passenger in passengers)
+
+        {
+            List<Flight>? passengerFilteredFlights = GetFilteredFlightsForPassenger(passenger, searchFlight);
+            if (passengerFilteredFlights != null)
+            {
+                allFilteredFlights.AddRange(passengerFilteredFlights);
+            }
+        }
+
+        return allFilteredFlights;
+    }
+
+    private List<Flight>? GetFilteredFlightsForPassenger(Passenger passenger, Flight searchFlight)
+    {
+        List<Flight>? filteredFlights = flightController.FiltterFlightsByParameters(searchFlight, passenger);
+
+        if (filteredFlights?.Count > 0)
+        {
+            Console.WriteLine($"{passenger.Name}:");
+            PrintFlights(filteredFlights);
+            return filteredFlights;
+        }
+
+        return null;
+    }
+
+    private void PrintFilteredFlights(List<Flight>? filteredFlights)
+    {
+        if (filteredFlights?.Count > 0)
+        {
+            Console.Write("The flights were found successfully. Please enter '2' to return: ");
+        }
+        else
+        {
+            Console.Write("The flights could not be found. Please try again or enter '2' to return: ");
+        }
+    }
+    private TEnum? GetNullableEnumInput<TEnum>(string prompt) where TEnum : struct
+    {
+        Console.Write(prompt);
+        string? input = Console.ReadLine();
+        if (!string.IsNullOrEmpty(input) && Enum.TryParse(input, out TEnum parsedValue))
+        {
+            return parsedValue;
+        }
+        return null;
+    }
+
+    private int? GetNullableIntInput(string prompt)
+    {
+        Console.Write(prompt);
+        string? input = Console.ReadLine();
+        if (!string.IsNullOrEmpty(input) && int.TryParse(input, out int parsedValue))
+        {
+            return parsedValue;
+        }
+        return null;
+    }
+
+    private DateTime? GetNullableDateTimeInput(string prompt)
+    {
+        Console.Write(prompt);
+        string? input = Console.ReadLine();
+        if (!string.IsNullOrEmpty(input) && DateTime.TryParse(input, out DateTime parsedValue))
+        {
+            return parsedValue;
+        }
+        return null;
+    }
+
+    private string? GetUserInput(string prompt)
+    {
+        Console.Write(prompt);
+        string? input = Console.ReadLine();
+        return string.IsNullOrEmpty(input) ? null : input;
     }
     public void InitUI()
     {

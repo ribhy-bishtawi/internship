@@ -259,7 +259,8 @@ public class PassengerView
         string? flightClassInput = Console.ReadLine();
         TripClass? flightClass = !string.IsNullOrEmpty(flightClassInput) && Enum.TryParse(flightClassInput, out TripClass parsedFlightClass) ? parsedFlightClass : (TripClass?)null;
 
-        List<Flight>? filteredFlights = flightController.FiltterFlightsByParameters(price, departureDate, departureCountry, departureAirport, arrivalAirport, flightClass);
+        // List<Flight>? filteredFlights = flightController.FiltterFlightsByParameters(price, departureDate, departureCountry, departureAirport, arrivalAirport, flightClass);
+        List<Flight>? filteredFlights = null;
         if (filteredFlights != null)
         {
             foreach (var flight in filteredFlights)
