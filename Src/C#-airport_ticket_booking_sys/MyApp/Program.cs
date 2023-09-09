@@ -10,7 +10,12 @@ class Program
 {
     static void Main(string[] args)
     {
-        PassengerController passengerController = new PassengerController();
+        var fileReader = new FileReader();
+        var fileWriter = new FileWriter();
+        var passengerValidator = new PassengerValidator();
+        var loger = new ConsoleLogger();
+
+        PassengerController passengerController = new PassengerController(fileReader, fileWriter, passengerValidator, loger);
         FlightController flightController = new FlightController();
 
         PassengerView passengerView = new PassengerView(passengerController, flightController);

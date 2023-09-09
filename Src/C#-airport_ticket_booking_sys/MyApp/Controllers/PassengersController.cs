@@ -1,12 +1,29 @@
 using AirportTrackingSystem.Models;
 using System.ComponentModel.DataAnnotations;
 using AirportTrackingSystem.Enums;
+using AirportTrackingSystem.Interfaces;
 
 
 namespace AirportTrackingSystem.Controllers;
 
 public class PassengerController
 {
+
+    private readonly IFileReader fileReader;
+    private readonly IFileWriter fileWriter;
+    private readonly IPassengerValidator passengerValidator;
+    private readonly ILogger logger;
+
+    public PassengerController(IFileReader fileReader, IFileWriter fileWriter, IPassengerValidator passengerValidator, ILogger logger)
+    {
+        this.fileReader = fileReader ?? throw new ArgumentNullException(nameof(fileReader));
+        this.fileWriter = fileWriter ?? throw new ArgumentNullException(nameof(fileWriter));
+        this.passengerValidator = passengerValidator ?? throw new ArgumentNullException(nameof(passengerValidator));
+        this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
+
+    }
+
     private List<Passenger> passengers = new List<Passenger>();
     public bool IsLoggedIn { set; get; } = false;
     private Passenger? CurrentPassenger { set; get; } = new Passenger();
@@ -15,19 +32,16 @@ public class PassengerController
         int lineNum = 0;
         try
         {
-            using (var reader = new StreamReader(filePath))
+            var lines = fileReader.ReadAllLines(filePath);
+            foreach (var line in lines)
             {
-                while (!reader.EndOfStream)
+                lineNum++;
+                var fields = line?.Split(',');
+                if (fields != null && fields.Length >= 2)
                 {
-                    lineNum++;
-                    var line = reader.ReadLine();
-                    var fields = line?.Split(',');
-                    if (fields != null && fields.Length >= 2) // Check if there are enough fields
+                    if (TryCreatePassengerFromFields(fields, out Passenger? passenger, lineNum))
                     {
-                        if (TryCreateFlightFromFields(fields, out Passenger? passenger, lineNum))
-                        {
-                            passengers.Add(passenger!);
-                        }
+                        passengers.Add(passenger!);
                     }
                 }
             }
@@ -35,13 +49,12 @@ public class PassengerController
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Error reading CSV file: " + ex.Message);
-            return false;
+            throw new InvalidOperationException("Error reading CSV file.", ex);
         }
 
     }
 
-    private bool TryCreateFlightFromFields(string[] fields, out Passenger? passenger, int lineNum)
+    private bool TryCreatePassengerFromFields(string[] fields, out Passenger? passenger, int lineNum)
     {
         passenger = null;
         passenger = new Passenger
@@ -50,14 +63,12 @@ public class PassengerController
             Password = fields[1],
             Flights = new List<Flight>()
         };
-        var validationContext = new ValidationContext(passenger);
-        var validationResults = new List<ValidationResult>();
-        if (!Validator.TryValidateObject(passenger, validationContext, validationResults, validateAllProperties: true))
+        if (!passengerValidator.Validate(passenger, out var validationResults))
         {
-            Console.WriteLine($"The following validation errors were detected in the values entered on line {lineNum}:");
+            logger.Log($"The following validation errors were detected in the values entered on line {lineNum}:");
             foreach (var validationResult in validationResults)
             {
-                Console.WriteLine($"\t{validationResult.ErrorMessage}");
+                throw new InvalidOperationException($"The following validation errors were detected in the values entered on line {lineNum}: {string.Join(", ", validationResults.Select(r => r.ErrorMessage))}");
             }
             return false;
         }
@@ -65,10 +76,7 @@ public class PassengerController
     }
     public void WritePassengersToCSV(string filePath, Passenger passenger)
     {
-        using (StreamWriter writer = new StreamWriter(filePath, append: true))
-        {
-            writer.WriteLine($"{passenger.Name},{passenger.Password}");
-        }
+        fileWriter.WriteToFile(filePath, $"{passenger.Name},{passenger.Password}");
     }
 
     public AccountStatus AddPassenger(string? name, string? password)
@@ -77,13 +85,11 @@ public class PassengerController
         if (!alreadyRegistered)
         {
             Passenger passenger = new Passenger { Name = name, Password = password, Flights = new List<Flight>() };
-            var validationContext = new ValidationContext(passenger);
-            var validationResults = new List<ValidationResult>();
-            if (!Validator.TryValidateObject(passenger, validationContext, validationResults, validateAllProperties: true))
+            if (!passengerValidator.Validate(passenger, out var validationResults))
             {
                 foreach (var validationResult in validationResults)
                 {
-                    Console.WriteLine($"{validationResult.ErrorMessage}");
+                    logger.Log($"{validationResult.ErrorMessage}");
                 }
                 return AccountStatus.ValidationError;
                 ;
