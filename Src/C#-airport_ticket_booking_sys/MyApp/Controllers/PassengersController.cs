@@ -11,14 +11,12 @@ public class PassengerController
 
     private readonly IFileReader fileReader;
     private readonly IFileWriter fileWriter;
-    private readonly IPassengerValidator passengerValidator;
     private readonly ILogger logger;
 
-    public PassengerController(IFileReader fileReader, IFileWriter fileWriter, IPassengerValidator passengerValidator, ILogger logger)
+    public PassengerController(IFileReader fileReader, IFileWriter fileWriter, ILogger logger)
     {
         this.fileReader = fileReader ?? throw new ArgumentNullException(nameof(fileReader));
         this.fileWriter = fileWriter ?? throw new ArgumentNullException(nameof(fileWriter));
-        this.passengerValidator = passengerValidator ?? throw new ArgumentNullException(nameof(passengerValidator));
         this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
 
@@ -63,7 +61,9 @@ public class PassengerController
             Password = fields[1],
             Flights = new List<Flight>()
         };
-        if (!passengerValidator.Validate(passenger, out var validationResults))
+        var validationResults = new List<ValidationResult>();
+        var validationContext = new ValidationContext(passenger);
+        if (!Validator.TryValidateObject(passenger, validationContext, validationResults, validateAllProperties: true))
         {
             logger.Log($"The following validation errors were detected in the values entered on line {lineNum}:");
             foreach (var validationResult in validationResults)
@@ -85,7 +85,9 @@ public class PassengerController
         if (!alreadyRegistered)
         {
             Passenger passenger = new Passenger { Name = name, Password = password, Flights = new List<Flight>() };
-            if (!passengerValidator.Validate(passenger, out var validationResults))
+            var validationResults = new List<ValidationResult>();
+            var validationContext = new ValidationContext(passenger);
+            if (!Validator.TryValidateObject(passenger, validationContext, validationResults, validateAllProperties: true))
             {
                 foreach (var validationResult in validationResults)
                 {
