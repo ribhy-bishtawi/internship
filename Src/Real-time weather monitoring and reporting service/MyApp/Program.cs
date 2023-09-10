@@ -1,8 +1,9 @@
 ﻿using System.Text.RegularExpressions;
 using Newtonsoft.Json;
-using WatherSys.Models;
-using WatherSys.Models.Bots;
-using WatherSys.Models.Strategies;
+using WeatherSys.Models;
+using WeatherSys.Bots;
+using WeatherSys.Strategies;
+using WeatherSys.Interfaces;
 
 
 class Program
@@ -10,7 +11,7 @@ class Program
     static void Main(string[] args)
     {
         BotConfigurations botConfigurations = LoadConfigrations();
-        WeatherData weatherData = InitializeWeatherData(botConfigurations);
+        IWeatherObserverManager weatherObserverData = InitializeWeatherData(botConfigurations);
 
         Console.WriteLine("Enter weather data: ");
         string? inputData = Console.ReadLine();
@@ -20,7 +21,7 @@ class Program
             return;
         }
 
-        ProcessInput(weatherData, inputData);
+        ProcessInput(weatherObserverData, inputData);
 
     }
     static BotConfigurations LoadConfigrations()
@@ -30,18 +31,18 @@ class Program
         return botConfigurations;
     }
 
-    static WeatherData InitializeWeatherData(BotConfigurations botConfigurations)
+    static IWeatherObserverManager InitializeWeatherData(BotConfigurations botConfigurations)
     {
         RainBot rainBot = CreateRainBot(botConfigurations.RainBot!);
         SunBot sunBot = CreateSunBot(botConfigurations.SunBot!);
         SnowBot snowBot = CreateSnowBot(botConfigurations.SnowBot!);
 
-        WeatherData weatherData = new WeatherData();
-        weatherData.Subscribe(rainBot);
-        weatherData.Subscribe(sunBot);
-        weatherData.Subscribe(snowBot);
+        IWeatherObserverManager weatherObserverData = new WeatherObserverManager();
+        weatherObserverData.Subscribe(rainBot);
+        weatherObserverData.Subscribe(sunBot);
+        weatherObserverData.Subscribe(snowBot);
 
-        return weatherData;
+        return weatherObserverData;
     }
     static RainBot CreateRainBot(BotConfiguration configuration)
     {
@@ -72,8 +73,9 @@ class Program
         };
     }
 
-    static void ProcessInput(WeatherData weatherData, string inputData)
+    static void ProcessInput(IWeatherObserverManager weatherObserverData, string inputData)
     {
+        IWeatherData weatherData = new WeatherData(weatherObserverData);
         if (IsJson(inputData))
         {
             weatherData.InputStrategy = new JsonStrategy();

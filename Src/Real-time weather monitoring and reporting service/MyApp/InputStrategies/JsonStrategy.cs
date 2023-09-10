@@ -1,8 +1,8 @@
 using Newtonsoft.Json;
-using WatherSys.Models.Interfaces;
-using WatherSys.Models;
+using WeatherSys.Interfaces;
+using WeatherSys.Models;
 
-namespace WatherSys.Models.Strategies;
+namespace WeatherSys.Strategies;
 class JsonStrategy : IInputStrategy
 {
     public WeatherData ParseInput(string input)

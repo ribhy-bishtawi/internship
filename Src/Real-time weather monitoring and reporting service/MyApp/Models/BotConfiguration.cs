@@ -1,4 +1,4 @@
-namespace WatherSys.Models;
+namespace WeatherSys.Models;
 public class BotConfiguration
 {
 

@@ -1,5 +1,5 @@
-namespace WatherSys.Models.Interfaces;
+namespace WeatherSys.Interfaces;
 public interface IWeatherObserver
 {
-    void Update(WeatherData weatherData);
+    void Update(IWeatherData weatherData);
 }

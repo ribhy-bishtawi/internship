@@ -1,4 +1,6 @@
-namespace WatherSys.Models.Interfaces;
+using WeatherSys.Models;
+
+namespace WeatherSys.Interfaces;
 public interface IInputStrategy
 {
     WeatherData ParseInput(string input);

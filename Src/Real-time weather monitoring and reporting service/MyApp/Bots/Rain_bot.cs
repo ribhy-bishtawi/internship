@@ -1,8 +1,8 @@
-namespace WatherSys.Models.Bots;
+namespace WeatherSys.Bots;
 
 using System;
 using System.Collections.Generic;
-using WatherSys.Models.Interfaces;
+using WeatherSys.Interfaces;
 
 public class RainBot : IWeatherObserver
 {
@@ -10,7 +10,7 @@ public class RainBot : IWeatherObserver
     public int? HumidityThreshold { get; set; }
     public string? Message { get; set; }
 
-    public void Update(WeatherData weatherData)
+    public void Update(IWeatherData weatherData)
     {
         if (weatherData.Humidity > HumidityThreshold)
         {
