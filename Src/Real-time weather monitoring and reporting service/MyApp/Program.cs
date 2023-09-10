@@ -75,7 +75,8 @@ class Program
 
     static void ProcessInput(IWeatherObserverManager weatherObserverData, string inputData)
     {
-        IWeatherData weatherData = new WeatherData(weatherObserverData);
+        IWeatherData weatherData = new WeatherData();
+        IWeatherDataProcessor weatherDataProcessor = new WeatherDataProcessor(weatherObserverData);
         if (IsJson(inputData))
         {
             weatherData.InputStrategy = new JsonStrategy();
@@ -89,7 +90,7 @@ class Program
             Console.WriteLine("Unknown format.");
             return;
         }
-        weatherData.ProcessInput(inputData);
+        weatherDataProcessor.ProcessInput(weatherData, inputData);
     }
 
     static bool IsJson(string input)

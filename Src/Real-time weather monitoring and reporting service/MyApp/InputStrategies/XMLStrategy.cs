@@ -3,7 +3,7 @@ using WeatherSys.Models;
 using WeatherSys.Interfaces;
 
 namespace WeatherSys.Strategies;
-class XMLStrategy : IInputStrategy
+public class XMLStrategy : IInputStrategy
 {
     public WeatherData ParseInput(string input)
     {

@@ -11,23 +11,6 @@ public class WeatherData : IWeatherData
 
     [XmlIgnore]
     public IInputStrategy? InputStrategy { get; set; }
-    [XmlIgnore]
-    private readonly IWeatherObserverManager observerManager;
-    private WeatherData()
-    {
-    }
 
-    public WeatherData(IWeatherObserverManager observerManager)
-    {
-        this.observerManager = observerManager;
-    }
 
-    public void ProcessInput(string input)
-    {
-        WeatherData weatherData = InputStrategy!.ParseInput(input);
-        Location = weatherData.Location;
-        Temperature = weatherData.Temperature;
-        Humidity = weatherData.Humidity;
-        observerManager.NotifyObservers(this);
-    }
 }
